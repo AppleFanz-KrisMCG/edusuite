@@ -5,18 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EduSuite - Mistakes Logbook & EduScan Pro</title>
     
-    <!-- External Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Chart.js for Statistics -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- Stable docx and FileSaver for Word Generation (Mistakes Logbook) -->
     <script src="https://unpkg.com/docx@7.8.2/build/index.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-
-    <!-- Barcode & QR Scanner -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.11.5/JsBarcode.all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
 
@@ -25,29 +18,17 @@
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        
-        .app-view { display: none; }
-        .app-view.active { display: block; }
-        
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        
-        #loading-overlay { display: none; }
-        #loading-overlay.active { display: flex; }
-
+        .app-view { display: none; } .app-view.active { display: block; }
+        .tab-content { display: none; } .tab-content.active { display: block; }
+        #loading-overlay { display: none; } #loading-overlay.active { display: flex; }
         .toast-enter { transform: translateY(100%); opacity: 0; }
         .toast-enter-active { transform: translateY(0); opacity: 1; transition: all 0.3s ease-out; }
         .toast-leave-active { transform: translateY(100%); opacity: 0; transition: all 0.3s ease-in; }
-
-        @media print {
-            .no-print { display: none !important; }
-            body { background: white; }
-        }
+        @media print { .no-print { display: none !important; } body { background: white; } }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans h-screen flex flex-col overflow-hidden">
 
-    <!-- Global Primary Navbar -->
     <nav class="bg-indigo-900 text-white shadow-md z-20 flex-shrink-0 no-print">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
@@ -70,7 +51,6 @@
         </div>
     </nav>
 
-    <!-- Secondary Navbar: Mistakes Logbook -->
     <div id="subnav-logbook" class="bg-white border-b border-slate-200 shadow-sm z-10 flex-shrink-0 no-print app-subnav">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-6 h-12 items-center overflow-x-auto scrollbar-hide">
             <button class="nav-btn text-indigo-600 font-bold border-b-2 border-indigo-600 px-1 py-3 text-sm whitespace-nowrap transition" data-target="view-add-error">
@@ -85,7 +65,6 @@
         </div>
     </div>
 
-    <!-- Secondary Navbar: EduScan Pro -->
     <div id="subnav-eduscan" class="bg-white border-b border-slate-200 shadow-sm z-10 flex-shrink-0 no-print app-subnav hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-6 h-12 items-center overflow-x-auto scrollbar-hide">
             <button class="nav-btn text-indigo-600 font-bold border-b-2 border-indigo-600 px-1 py-3 text-sm whitespace-nowrap transition" data-target="view-generate">
@@ -95,7 +74,7 @@
                 <i class="fa-solid fa-camera mr-1"></i> Scan & Grade
             </button>
             <button class="nav-btn text-slate-500 hover:text-indigo-600 font-medium px-1 py-3 text-sm whitespace-nowrap transition border-b-2 border-transparent" data-target="view-records">
-                <i class="fa-solid fa-list mr-1"></i> Student Records
+                <i class="fa-solid fa-list mr-1"></i> Paper Database
             </button>
             <button class="nav-btn text-slate-500 hover:text-indigo-600 font-medium px-1 py-3 text-sm whitespace-nowrap transition border-b-2 border-transparent" data-target="view-stats">
                 <i class="fa-solid fa-chart-line mr-1"></i> Analytics
@@ -103,21 +82,17 @@
         </div>
     </div>
 
-    <!-- Main Content Area -->
     <main class="flex-1 overflow-y-auto relative bg-slate-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-            <!-- MODULE: GLOBAL SETTINGS -->
             <div id="view-settings" class="tab-content max-w-2xl mx-auto">
                 <div class="bg-white shadow rounded-lg p-6 border border-slate-200">
                     <h2 class="text-2xl font-bold text-slate-800 mb-6 border-b pb-2"><i class="fa-solid fa-database text-indigo-600 mr-2"></i> System Database Settings</h2>
                     <p class="text-sm text-slate-600 mb-6">Connect your Google Sheets backend to sync all Errors, Students, and Grades. Input the Google Apps Script Web App URL below.</p>
-                    
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-slate-700 mb-1">Google Apps Script URL <span class="text-red-500">*</span></label>
                         <input type="text" id="gas-url" placeholder="https://script.google.com/macros/s/.../exec" class="w-full border border-slate-300 rounded-md p-3 focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
-                    
                     <div class="flex space-x-3 mt-6">
                         <button id="btn-save-settings" class="bg-indigo-600 text-white px-5 py-2.5 rounded hover:bg-indigo-700 transition font-medium"><i class="fa-solid fa-save mr-1"></i> Save Settings</button>
                         <button id="btn-test-connection" class="bg-slate-200 text-slate-800 px-5 py-2.5 rounded hover:bg-slate-300 transition font-medium"><i class="fa-solid fa-wifi mr-1"></i> Test & Sync Data</button>
@@ -125,169 +100,174 @@
                 </div>
             </div>
 
-            <!-- ========================================== -->
-            <!-- APP 1: MISTAKES LOGBOOK                    -->
-            <!-- ========================================== -->
+            <!-- ================== APP 1: MISTAKES LOGBOOK ================== -->
 
-            <!-- ADD/EDIT ERROR -->
             <div id="view-add-error" class="tab-content active max-w-5xl mx-auto app-logbook">
                 <div class="bg-white shadow rounded-lg p-6 sm:p-8 border border-slate-200">
                     <h2 id="form-title" class="text-2xl font-bold text-slate-800 mb-6 border-b pb-2"><i class="fa-solid fa-pen-to-square text-indigo-600 mr-2"></i> 增加錯題 (Add New Error)</h2>
                     
+                    <!-- Link to EduScan Paper -->
+                    <div class="bg-blue-50 p-5 rounded-md border border-blue-100 mb-6">
+                        <label class="block text-sm font-bold text-blue-900 mb-2"><i class="fa-solid fa-link mr-1"></i> Link to EduScan Paper (Optional)</label>
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <button type="button" id="btn-logbook-scan-parent" class="bg-blue-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-blue-700 whitespace-nowrap transition">
+                                <i class="fa-solid fa-camera mr-1"></i> Scan Parent Barcode
+                            </button>
+                            <input type="text" id="field-parent-bc" placeholder="Parent Paper ID (e.g. MATH2024A)" class="border border-slate-300 rounded-md p-2 flex-1">
+                            <input type="text" id="field-parent-qnum" placeholder="Q. Num (e.g. 1, 1biii - No 'Q')" class="border border-slate-300 rounded-md p-2 flex-1">
+                        </div>
+                        <div id="logbook-scanner-container" class="hidden mt-4 max-w-sm rounded-lg overflow-hidden border shadow-inner">
+                            <div id="logbook-reader"></div>
+                            <button type="button" id="btn-logbook-scan-stop" class="w-full bg-slate-300 text-slate-800 py-2 font-bold">Stop Scanner</button>
+                        </div>
+                    </div>
+
                     <form id="add-error-form" class="space-y-6">
-                        <!-- Grid 1: Basic Info -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Subject / 科目 <span class="text-red-500">*</span></label>
-                                <select id="field-subject" required class="w-full border border-slate-300 rounded-md p-2.5 focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50">
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Subject <span class="text-red-500">*</span></label>
+                                <select id="field-subject" required class="w-full border border-slate-300 rounded-md p-2.5 bg-slate-50">
                                     <option value="" disabled selected>Select Subject...</option>
                                     <option value="Chinese">Chinese</option>
                                     <option value="English">English</option>
-                                    <option value="Math (M0)">Math (M0)</option>
-                                    <option value="Math (M2)">Math (M2)</option>
+                                    <option value="Mathematics">Mathematics</option>
                                     <option value="Physics">Physics</option>
                                     <option value="Chemistry">Chemistry</option>
                                     <option value="Biology">Biology</option>
+                                    <option value="M2">M2</option>
+                                    <option value="CS">CS</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Chapter / 課題</label>
-                                <input type="text" id="field-chapter" placeholder="e.g. Mechanics, Trigonometry" class="w-full border border-slate-300 rounded-md p-2.5 bg-slate-50">
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Sec Level (Optional)</label>
+                                <select id="field-secondary" class="w-full border border-slate-300 rounded-md p-2.5 bg-slate-50">
+                                    <option value="">Select...</option>
+                                    <option value="4">Secondary 4</option>
+                                    <option value="5">Secondary 5</option>
+                                    <option value="6">Secondary 6</option>
+                                </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Key Point / 重點</label>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Chapter</label>
+                                <input type="text" id="field-chapter" placeholder="e.g. Mechanics" class="w-full border border-slate-300 rounded-md p-2.5 bg-slate-50">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Key Point</label>
                                 <input type="text" id="field-keypoint" placeholder="e.g. Newton's 2nd Law" class="w-full border border-slate-300 rounded-md p-2.5 bg-slate-50">
                             </div>
                         </div>
 
-                        <!-- Question Source -->
                         <div class="bg-indigo-50 p-5 rounded-md border border-indigo-100">
-                            <label class="block text-sm font-bold text-indigo-900 mb-3">Question Source / 題目來源 <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-bold text-indigo-900 mb-3">Question Source <span class="text-red-500">*</span></label>
                             <div class="flex flex-wrap gap-4 mb-4">
-                                <label class="flex items-center cursor-pointer"><input type="radio" name="source_type" value="Past Paper" required class="mr-2 text-indigo-600 focus:ring-indigo-500"> <span class="font-medium text-slate-700">Past Paper</span></label>
-                                <label class="flex items-center cursor-pointer"><input type="radio" name="source_type" value="Exercise" class="mr-2 text-indigo-600 focus:ring-indigo-500"> <span class="font-medium text-slate-700">Exercise</span></label>
-                                <label class="flex items-center cursor-pointer"><input type="radio" name="source_type" value="Quiz or Exam" class="mr-2 text-indigo-600 focus:ring-indigo-500"> <span class="font-medium text-slate-700">Quiz or Exam</span></label>
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="source_type" value="Past Paper" required class="mr-2 text-indigo-600"> <span class="font-medium text-slate-700">Past Paper</span></label>
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="source_type" value="Exercise" class="mr-2 text-indigo-600"> <span class="font-medium text-slate-700">Exercise</span></label>
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="source_type" value="Quiz or Exam" class="mr-2 text-indigo-600"> <span class="font-medium text-slate-700">Quiz or Exam</span></label>
                             </div>
                             
                             <div id="source-details-container" class="hidden mt-4 pt-4 border-t border-indigo-200">
                                 <div id="source_past_paper_div" class="hidden grid grid-cols-2 md:grid-cols-4 gap-4">
-                                    <select id="field-pp-type" class="border border-slate-300 rounded-md p-2.5 bg-white">
-                                        <option value="HKDSE">HKDSE</option>
-                                        <option value="HKCEE">HKCEE</option>
-                                        <option value="HKALE">HKALE</option>
-                                    </select>
-                                    <input type="number" id="field-pp-year" placeholder="Year (e.g. 2023)" class="border border-slate-300 rounded-md p-2.5 bg-white">
-                                    <select id="field-pp-paper" class="border border-slate-300 rounded-md p-2.5 bg-white">
-                                        <option value="" disabled selected>Select Paper...</option>
-                                        <option value="Paper 1">Paper 1</option>
-                                        <option value="Paper 1A">Paper 1A</option>
-                                        <option value="Paper 1B">Paper 1B</option>
-                                        <option value="Paper 2">Paper 2</option>
-                                        <option value="Paper 3">Paper 3</option>
-                                        <option value="Paper 4">Paper 4</option>
-                                    </select>
-                                    <input type="text" id="field-pp-qnum" placeholder="Q. Number (e.g. 5a)" class="border border-slate-300 rounded-md p-2.5 bg-white">
+                                    <select id="field-pp-type" class="border border-slate-300 rounded-md p-2.5 bg-white"><option value="HKDSE">HKDSE</option><option value="HKCEE">HKCEE</option><option value="HKALE">HKALE</option></select>
+                                    <input type="number" id="field-pp-year" placeholder="Year" class="border border-slate-300 rounded-md p-2.5 bg-white">
+                                    <select id="field-pp-paper" class="border border-slate-300 rounded-md p-2.5 bg-white"><option value="" disabled selected>Paper...</option><option value="Paper 1">Paper 1</option><option value="Paper 2">Paper 2</option><option value="Paper 3">Paper 3</option></select>
+                                    <input type="text" id="field-pp-qnum" placeholder="Q. Num (e.g. 1, 1biii - No 'Q')" class="border border-slate-300 rounded-md p-2.5 bg-white">
                                 </div>
-                                <div id="source_exercise_div" class="hidden">
-                                    <input type="text" id="field-exe-name" placeholder="Exercise Book Name / Source details" class="w-full border border-slate-300 rounded-md p-2.5 bg-white">
-                                </div>
-                                <div id="source_quiz_div" class="hidden">
-                                    <input type="text" id="field-quiz-name" placeholder="Quiz or Exam Name (e.g. UT1, Mock Exam)" class="w-full border border-slate-300 rounded-md p-2.5 bg-white">
-                                </div>
+                                <div id="source_exercise_div" class="hidden"><input type="text" id="field-exe-name" placeholder="Exercise Name" class="w-full border border-slate-300 rounded-md p-2.5 bg-white"></div>
+                                <div id="source_quiz_div" class="hidden"><input type="text" id="field-quiz-name" placeholder="Quiz/Exam Name" class="w-full border border-slate-300 rounded-md p-2.5 bg-white"></div>
                             </div>
                         </div>
 
-                        <!-- Questions & Answers -->
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                             <div class="space-y-5">
                                 <div>
-                                    <label class="block text-sm font-bold text-slate-700 mb-2">Question / 題目 <span class="text-red-500">*</span></label>
-                                    <textarea id="field-question" rows="4" required class="w-full border border-slate-300 rounded-md p-3 mb-2 bg-slate-50 focus:bg-white transition"></textarea>
-                                    <input type="file" id="field-q-img" accept="image/*" class="text-sm block w-full text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                                    <img id="preview-q-img" class="mt-3 hidden max-h-48 rounded border border-slate-200 shadow-sm">
+                                    <label class="block text-sm font-bold text-slate-700 mb-2">Question <span class="text-red-500">*</span></label>
+                                    <textarea id="field-question" rows="4" required class="w-full border border-slate-300 rounded-md p-3 mb-2 bg-slate-50"></textarea>
+                                    <input type="file" id="field-q-img" accept="image/*" class="text-sm block w-full text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-indigo-50 file:text-indigo-700">
+                                    <img id="preview-q-img" class="mt-3 hidden max-h-48 rounded border border-slate-200">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-bold text-red-700 mb-2">Wrong Answer / 錯誤答案 <span class="text-red-500">*</span></label>
-                                    <textarea id="field-wrong-ans" rows="3" required class="w-full border border-red-200 rounded-md p-3 bg-red-50 focus:bg-white transition focus:border-red-400 focus:ring-red-400"></textarea>
+                                    <label class="block text-sm font-bold text-red-700 mb-2">Wrong Answer <span class="text-red-500">*</span></label>
+                                    <textarea id="field-wrong-ans" rows="3" required class="w-full border border-red-200 rounded-md p-3 bg-red-50"></textarea>
                                 </div>
                             </div>
                             
                             <div class="space-y-5">
                                 <div>
-                                    <label class="block text-sm font-bold text-green-700 mb-2">Correct Answer / 正確答案 <span class="text-red-500">*</span></label>
-                                    <textarea id="field-correct-ans" rows="4" required class="w-full border border-green-200 rounded-md p-3 bg-green-50 focus:bg-white transition focus:border-green-400 focus:ring-green-400 mb-2"></textarea>
-                                    <input type="file" id="field-a-img" accept="image/*" class="text-sm block w-full text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100">
-                                    <img id="preview-a-img" class="mt-3 hidden max-h-48 rounded border border-slate-200 shadow-sm">
+                                    <label class="block text-sm font-bold text-green-700 mb-2">Correct Answer <span class="text-red-500">*</span></label>
+                                    <textarea id="field-correct-ans" rows="4" required class="w-full border border-green-200 rounded-md p-3 bg-green-50 mb-2"></textarea>
+                                    <input type="file" id="field-a-img" accept="image/*" class="text-sm block w-full text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-green-50 file:text-green-700">
+                                    <img id="preview-a-img" class="mt-3 hidden max-h-48 rounded border border-slate-200">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-bold text-slate-700 mb-2">Comments / 備註</label>
-                                    <textarea id="field-comments" rows="3" class="w-full border border-slate-300 rounded-md p-3 bg-slate-50 focus:bg-white transition"></textarea>
+                                    <label class="block text-sm font-bold text-slate-700 mb-2">Comments</label>
+                                    <textarea id="field-comments" rows="3" class="w-full border border-slate-300 rounded-md p-3 bg-slate-50"></textarea>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Error Analysis -->
                         <div class="bg-slate-100 p-6 rounded-md border border-slate-200">
-                            <h3 class="text-lg font-bold text-slate-800 mb-4 border-b border-slate-300 pb-2">Error Analysis / 原因分析</h3>
-                            
+                            <h3 class="text-lg font-bold text-slate-800 mb-4 border-b border-slate-300 pb-2">Error Analysis</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
                                 <div>
-                                    <label class="block text-sm font-bold text-slate-700 mb-3">Difficulty / 困難程度 <span class="text-red-500">*</span></label>
+                                    <label class="block text-sm font-bold text-slate-700 mb-3">Difficulty (1-5) <span class="text-red-500">*</span></label>
                                     <div class="flex space-x-6">
-                                        <label class="cursor-pointer flex flex-col items-center"><input type="radio" name="difficulty" value="1" required class="mb-1 w-4 h-4 text-indigo-600"><span class="text-xs text-slate-500">1 (Easy)</span></label>
-                                        <label class="cursor-pointer flex flex-col items-center"><input type="radio" name="difficulty" value="2" class="mb-1 w-4 h-4 text-indigo-600"><span class="text-xs text-slate-500">2</span></label>
-                                        <label class="cursor-pointer flex flex-col items-center"><input type="radio" name="difficulty" value="3" class="mb-1 w-4 h-4 text-indigo-600"><span class="text-xs text-slate-500">3</span></label>
-                                        <label class="cursor-pointer flex flex-col items-center"><input type="radio" name="difficulty" value="4" class="mb-1 w-4 h-4 text-indigo-600"><span class="text-xs text-slate-500">4</span></label>
-                                        <label class="cursor-pointer flex flex-col items-center"><input type="radio" name="difficulty" value="5" class="mb-1 w-4 h-4 text-indigo-600"><span class="text-xs text-slate-500">5 (Hard)</span></label>
+                                        <label class="cursor-pointer"><input type="radio" name="difficulty" value="1" required class="text-indigo-600"> 1</label>
+                                        <label class="cursor-pointer"><input type="radio" name="difficulty" value="2" class="text-indigo-600"> 2</label>
+                                        <label class="cursor-pointer"><input type="radio" name="difficulty" value="3" class="text-indigo-600"> 3</label>
+                                        <label class="cursor-pointer"><input type="radio" name="difficulty" value="4" class="text-indigo-600"> 4</label>
+                                        <label class="cursor-pointer"><input type="radio" name="difficulty" value="5" class="text-indigo-600"> 5</label>
                                     </div>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-bold text-slate-700 mb-3">Familiarity / 熟悉程度 <span class="text-red-500">*</span></label>
+                                    <label class="block text-sm font-bold text-slate-700 mb-3">Familiarity (1-5) <span class="text-red-500">*</span></label>
                                     <div class="flex space-x-6">
-                                        <label class="cursor-pointer flex flex-col items-center"><input type="radio" name="familiarity" value="1" required class="mb-1 w-4 h-4 text-indigo-600"><span class="text-xs text-slate-500">1 (Low)</span></label>
-                                        <label class="cursor-pointer flex flex-col items-center"><input type="radio" name="familiarity" value="2" class="mb-1 w-4 h-4 text-indigo-600"><span class="text-xs text-slate-500">2</span></label>
-                                        <label class="cursor-pointer flex flex-col items-center"><input type="radio" name="familiarity" value="3" class="mb-1 w-4 h-4 text-indigo-600"><span class="text-xs text-slate-500">3</span></label>
-                                        <label class="cursor-pointer flex flex-col items-center"><input type="radio" name="familiarity" value="4" class="mb-1 w-4 h-4 text-indigo-600"><span class="text-xs text-slate-500">4</span></label>
-                                        <label class="cursor-pointer flex flex-col items-center"><input type="radio" name="familiarity" value="5" class="mb-1 w-4 h-4 text-indigo-600"><span class="text-xs text-slate-500">5 (High)</span></label>
+                                        <label class="cursor-pointer"><input type="radio" name="familiarity" value="1" required class="text-indigo-600"> 1</label>
+                                        <label class="cursor-pointer"><input type="radio" name="familiarity" value="2" class="text-indigo-600"> 2</label>
+                                        <label class="cursor-pointer"><input type="radio" name="familiarity" value="3" class="text-indigo-600"> 3</label>
+                                        <label class="cursor-pointer"><input type="radio" name="familiarity" value="4" class="text-indigo-600"> 4</label>
+                                        <label class="cursor-pointer"><input type="radio" name="familiarity" value="5" class="text-indigo-600"> 5</label>
                                     </div>
                                 </div>
                             </div>
-
                             <div>
-                                <label class="block text-sm font-bold text-slate-700 mb-3">Root Cause / 原因 <span class="text-red-500">*</span></label>
+                                <label class="block text-sm font-bold text-slate-700 mb-3">Root Cause <span class="text-red-500">*</span></label>
                                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm bg-white p-4 rounded border border-slate-200">
-                                    <label class="cursor-pointer flex items-center"><input type="checkbox" name="root_cause" value="完全不會" class="mr-2 rounded text-indigo-600 focus:ring-indigo-500">完全不會</label>
-                                    <label class="cursor-pointer flex items-center"><input type="checkbox" name="root_cause" value="粗心大意" class="mr-2 rounded text-indigo-600 focus:ring-indigo-500">粗心大意</label>
-                                    <label class="cursor-pointer flex items-center"><input type="checkbox" name="root_cause" value="陷阱題目" class="mr-2 rounded text-indigo-600 focus:ring-indigo-500">陷阱題目</label>
-                                    <label class="cursor-pointer flex items-center"><input type="checkbox" name="root_cause" value="審題錯誤" class="mr-2 rounded text-indigo-600 focus:ring-indigo-500">審題錯誤</label>
-                                    <label class="cursor-pointer flex items-center"><input type="checkbox" name="root_cause" value="概念模糊" class="mr-2 rounded text-indigo-600 focus:ring-indigo-500">概念模糊</label>
-                                    <label class="cursor-pointer flex items-center"><input type="checkbox" name="root_cause" value="答案不整" class="mr-2 rounded text-indigo-600 focus:ring-indigo-500">答案不整</label>
-                                    <label class="cursor-pointer flex items-center"><input type="checkbox" name="root_cause" value="運算錯誤" class="mr-2 rounded text-indigo-600 focus:ring-indigo-500">運算錯誤</label>
-                                    <label class="cursor-pointer flex items-center"><input type="checkbox" name="root_cause" value="格式錯誤" class="mr-2 rounded text-indigo-600 focus:ring-indigo-500">格式錯誤</label>
-                                    <label class="col-span-2 md:col-span-4 cursor-pointer flex items-center"><input type="checkbox" id="rc_other_cb" value="其他原因" class="mr-2 rounded text-indigo-600 focus:ring-indigo-500">其他原因</label>
+                                    <label><input type="checkbox" name="root_cause" value="完全不會" class="mr-2">完全不會</label>
+                                    <label><input type="checkbox" name="root_cause" value="粗心大意" class="mr-2">粗心大意</label>
+                                    <label><input type="checkbox" name="root_cause" value="陷阱題目" class="mr-2">陷阱題目</label>
+                                    <label><input type="checkbox" name="root_cause" value="概念模糊" class="mr-2">概念模糊</label>
+                                    <label class="col-span-2 md:col-span-4"><input type="checkbox" id="rc_other_cb" value="其他" class="mr-2">其他</label>
                                 </div>
                                 <input type="text" id="field-rc-other" placeholder="Please specify..." class="mt-3 w-full border border-slate-300 rounded-md p-2.5 hidden bg-white">
                             </div>
                         </div>
 
                         <div class="flex justify-end pt-4 border-t border-slate-200 gap-4 mt-6">
-                            <button type="button" id="btn-cancel-edit" class="hidden bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-3 px-6 rounded-md transition duration-200 flex items-center text-lg">
-                                Cancel
-                            </button>
-                            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-md shadow-lg transition duration-200 flex items-center text-lg">
-                                <i class="fa-solid fa-cloud-arrow-up mr-2"></i> <span id="submit-btn-text">Save & Sync to Sheet</span>
-                            </button>
+                            <button type="button" id="btn-cancel-edit" class="hidden bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-3 px-6 rounded-md transition text-lg">Cancel</button>
+                            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-md shadow-lg transition text-lg"><i class="fa-solid fa-cloud-arrow-up mr-2"></i> <span id="submit-btn-text">Save & Sync</span></button>
                         </div>
                     </form>
+
+                    <!-- Sub-Barcode Result Box -->
+                    <div id="sub-barcode-result" class="hidden mt-8 bg-white shadow rounded-lg p-6 border-2 border-indigo-200 text-center">
+                        <h3 class="text-lg font-bold text-slate-800 mb-2">Question Sub-Barcode Generated!</h3>
+                        <div class="bg-slate-50 p-4 rounded-lg inline-block mb-4 border border-slate-200">
+                            <svg id="logbook-barcode-svg"></svg>
+                            <div id="logbook-barcode-info" class="mt-2 text-slate-700 text-sm leading-relaxed"></div>
+                        </div>
+                        <div class="flex justify-center gap-3">
+                            <button onclick="dlSubBarcode()" class="bg-green-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-green-700"><i class="fa-solid fa-download mr-1"></i> PNG</button>
+                            <button onclick="document.getElementById('sub-barcode-result').classList.add('hidden')" class="bg-slate-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-slate-700">Close</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- REVIEW LOGBOOK ERRORS -->
             <div id="view-review-errors" class="tab-content app-logbook">
                 <div class="bg-white p-6 shadow rounded-lg mb-6 border border-slate-200">
                     <h2 class="text-xl font-bold text-slate-800 mb-4 border-b pb-2"><i class="fa-solid fa-chart-line text-indigo-600 mr-2"></i> Logbook Statistics</h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="bg-indigo-50 p-4 rounded text-center border border-indigo-100 flex flex-col justify-center">
+                        <div class="bg-indigo-50 p-4 rounded text-center flex flex-col justify-center border border-indigo-100">
                             <div class="text-4xl font-black text-indigo-700" id="stat-total-errors">0</div>
                             <div class="text-sm text-indigo-900 font-medium mt-1">Total Errors Recorded</div>
                         </div>
@@ -298,79 +278,47 @@
 
                 <div class="bg-white p-4 shadow rounded-lg mb-6 sticky top-0 z-10 border border-slate-200">
                     <div class="flex flex-col md:flex-row justify-between gap-4 mb-4">
-                        <div class="flex-1 relative">
-                            <i class="fa-solid fa-search absolute left-3 top-3 text-slate-400"></i>
-                            <input type="text" id="search-input-err" placeholder="Search Chapter, Keywords, Source..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                        <div class="flex-1 relative flex gap-2">
+                            <div class="relative flex-1">
+                                <i class="fa-solid fa-search absolute left-3 top-3 text-slate-400"></i>
+                                <input type="text" id="search-input-err" placeholder="Search Barcode, Keywords, Source..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border rounded-md">
+                            </div>
+                            <button id="btn-logbook-review-scan" class="bg-indigo-600 text-white px-4 rounded-md font-bold hover:bg-indigo-700 whitespace-nowrap"><i class="fa-solid fa-camera mr-1"></i> Scan to Filter</button>
                         </div>
-                        <button id="btn-refresh-data" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-5 py-2 rounded-md font-bold transition border border-indigo-200 flex items-center justify-center">
-                            <i class="fa-solid fa-rotate-right mr-2"></i> Sync Cloud
-                        </button>
+                        <button id="btn-refresh-data" class="bg-indigo-50 text-indigo-700 px-5 py-2 rounded-md font-bold border border-indigo-200 hover:bg-indigo-100"><i class="fa-solid fa-rotate-right mr-2"></i> Sync Cloud</button>
                     </div>
 
-                    <div class="flex overflow-x-auto space-x-2 border-b border-slate-100 pb-3 mb-3 scrollbar-hide" id="subject-filters">
-                        <!-- Filters populated via JS -->
+                    <div id="logbook-review-scanner-container" class="hidden max-w-sm mx-auto mb-4 rounded overflow-hidden border">
+                        <div id="logbook-review-reader"></div>
+                        <button type="button" id="btn-logbook-review-scan-stop" class="w-full bg-slate-300 py-2 font-bold">Stop Scanner</button>
                     </div>
 
-                    <div class="flex flex-wrap gap-4 text-sm">
-                        <select id="filter-source" class="border rounded-md p-2 text-slate-700 bg-slate-50 font-medium">
-                            <option value="">All Sources</option>
-                            <option value="Past Paper">Past Paper</option>
-                            <option value="Exercise">Exercise</option>
-                            <option value="Quiz or Exam">Quiz or Exam</option>
-                        </select>
-                        <select id="filter-diff" class="border rounded-md p-2 text-slate-700 bg-slate-50 font-medium">
-                            <option value="">Any Difficulty</option>
-                            <option value="5">Level 5 (Hardest)</option>
-                            <option value="4">Level 4</option>
-                            <option value="3">Level 3</option>
-                            <option value="2">Level 2</option>
-                            <option value="1">Level 1 (Easiest)</option>
-                        </select>
-                        <select id="filter-fam" class="border rounded-md p-2 text-slate-700 bg-slate-50 font-medium">
-                            <option value="">Any Familiarity</option>
-                            <option value="1">Level 1 (Unfamiliar)</option>
-                            <option value="2">Level 2</option>
-                            <option value="3">Level 3</option>
-                            <option value="4">Level 4</option>
-                            <option value="5">Level 5 (Mastered)</option>
-                        </select>
-                    </div>
+                    <div class="flex overflow-x-auto space-x-2 border-b border-slate-100 pb-3 mb-3 scrollbar-hide" id="subject-filters"></div>
                 </div>
-
                 <div id="review-cards-container" class="grid grid-cols-1 gap-6 pb-20"></div>
             </div>
 
-            <!-- EXPORT LOGBOOK DOCX -->
             <div id="view-export-logbook" class="tab-content max-w-3xl mx-auto app-logbook">
                 <div class="bg-white shadow rounded-lg p-10 text-center border border-slate-200">
                     <i class="fa-solid fa-file-word text-6xl text-blue-600 mb-6"></i>
                     <h2 class="text-3xl font-bold text-slate-800 mb-4">Export Logbook to Word</h2>
-                    <p class="text-slate-600 mb-8 max-w-lg mx-auto text-lg">Generate a highly structured, editable `.docx` file featuring native tables, text, and your uploaded diagrams. Ideal for printing or further editing.</p>
-                    <button id="btn-generate-docx" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-full shadow-lg transition duration-200 flex items-center justify-center mx-auto text-xl">
+                    <p class="text-slate-600 mb-8 max-w-lg mx-auto text-lg">Generate a highly structured, editable `.docx` file featuring native tables, text, and your uploaded diagrams.</p>
+                    <button id="btn-generate-docx" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-full shadow-lg transition mx-auto text-xl">
                         <i class="fa-solid fa-download mr-3"></i> Generate DOCX
                     </button>
                 </div>
             </div>
 
-            <!-- ========================================== -->
-            <!-- APP 2: EDUSCAN PRO                         -->
-            <!-- ========================================== -->
+            <!-- ================== APP 2: EDUSCAN PRO ================== -->
 
-            <!-- GENERATE BARCODE -->
             <div id="view-generate" class="tab-content max-w-4xl mx-auto app-eduscan">
                 <div class="bg-white shadow rounded-lg p-6 sm:p-8 border border-slate-200 mb-6">
-                    <h2 class="text-2xl font-bold text-slate-800 mb-4 border-b pb-2"><i class="fa-solid fa-qrcode text-indigo-600 mr-2"></i> Generate Student Barcode</h2>
-                    
-                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded text-blue-900 text-sm">
-                        <strong>💡 Paper ID Tips:</strong><br>
-                        • Enter your own ID (e.g., MATH2024A, ENG001) or leave empty for auto-generation.<br>
-                        • Only letters and numbers are used (spaces and symbols removed).
-                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800 mb-4 border-b pb-2"><i class="fa-solid fa-qrcode text-indigo-600 mr-2"></i> Generate Paper Barcode</h2>
                     
                     <form id="eduscan-generate-form" class="space-y-5">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Subject *</label>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Subject <span class="text-red-500">*</span></label>
                                 <select id="es-subject" required class="w-full border border-slate-300 rounded-md p-2.5 bg-slate-50">
                                     <option value="">Select Subject...</option>
                                     <option value="Chinese">Chinese</option>
@@ -384,205 +332,137 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Secondary Level *</label>
-                                <select id="es-level" required class="w-full border border-slate-300 rounded-md p-2.5 bg-slate-50">
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Secondary Level (Optional)</label>
+                                <select id="es-level" class="w-full border border-slate-300 rounded-md p-2.5 bg-slate-50">
                                     <option value="">Select Level...</option>
                                     <option value="4">Secondary 4</option>
                                     <option value="5">Secondary 5</option>
                                     <option value="6">Secondary 6</option>
                                 </select>
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Type *</label>
-                                <select id="es-category" required class="w-full border border-slate-300 rounded-md p-2.5 bg-slate-50">
-                                    <option value="">Select Category...</option>
-                                    <option value="Exercise">Exercise</option>
-                                    <option value="Assessment">Assessment</option>
-                                    <option value="Homework">Homework</option>
-                                </select>
+                            
+                            <div class="md:col-span-2 bg-indigo-50 p-4 rounded border border-indigo-100">
+                                <label class="block text-sm font-bold text-indigo-900 mb-3">Question Source (Paper Level) <span class="text-red-500">*</span></label>
+                                <div class="flex flex-wrap gap-4 mb-3">
+                                    <label class="flex items-center"><input type="radio" name="es_source_type" value="Past Paper" required class="mr-2 text-indigo-600"> <span class="font-medium text-slate-700">Past Paper</span></label>
+                                    <label class="flex items-center"><input type="radio" name="es_source_type" value="Exercise" class="mr-2 text-indigo-600"> <span class="font-medium text-slate-700">Exercise</span></label>
+                                    <label class="flex items-center"><input type="radio" name="es_source_type" value="Quiz or Exam" class="mr-2 text-indigo-600"> <span class="font-medium text-slate-700">Quiz or Exam</span></label>
+                                </div>
+                                
+                                <div id="es-source-details-container" class="hidden mt-3 pt-3 border-t border-indigo-200">
+                                    <div id="es_source_past_paper_div" class="hidden grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <select id="es-pp-type" class="border border-slate-300 rounded-md p-2.5 bg-white"><option value="HKDSE">HKDSE</option><option value="HKCEE">HKCEE</option><option value="HKALE">HKALE</option></select>
+                                        <input type="number" id="es-pp-year" placeholder="Year (e.g. 2023)" class="border border-slate-300 rounded-md p-2.5 bg-white">
+                                        <select id="es-pp-paper" class="border border-slate-300 rounded-md p-2.5 bg-white"><option value="" disabled selected>Paper...</option><option value="Paper 1">Paper 1</option><option value="Paper 2">Paper 2</option><option value="Paper 3">Paper 3</option></select>
+                                    </div>
+                                    <div id="es_source_exercise_div" class="hidden"><input type="text" id="es-exe-name" placeholder="Exercise Book Name" class="w-full border border-slate-300 rounded-md p-2.5 bg-white"></div>
+                                    <div id="es_source_quiz_div" class="hidden"><input type="text" id="es-quiz-name" placeholder="Quiz or Exam Name (e.g. UT1)" class="w-full border border-slate-300 rounded-md p-2.5 bg-white"></div>
+                                </div>
                             </div>
-                            <div id="es-subcat-container" class="hidden">
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Sub-Type *</label>
-                                <select id="es-subtype" class="w-full border border-slate-300 rounded-md p-2.5 bg-slate-50"></select>
-                            </div>
-                            <div class="md:col-span-2">
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Assessment Name *</label>
-                                <input type="text" id="es-assess-name" required placeholder="e.g., DSE 2024, Mock Exam 1" class="w-full border border-slate-300 rounded-md p-2.5 bg-slate-50">
-                            </div>
+
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-medium text-slate-700 mb-1">Custom Paper ID (Optional)</label>
                                 <input type="text" id="es-paper-id" placeholder="e.g., MATH2024A" class="w-full border border-slate-300 rounded-md p-2.5 bg-slate-50">
                             </div>
                         </div>
-                        <div class="pt-2">
-                            <button type="submit" class="bg-indigo-600 text-white font-bold py-3 px-8 rounded hover:bg-indigo-700 transition">Generate & Sync Barcode</button>
-                        </div>
+                        <div class="pt-2"><button type="submit" class="bg-indigo-600 text-white font-bold py-3 px-8 rounded hover:bg-indigo-700 transition">Generate & Sync Barcode</button></div>
                     </form>
                 </div>
 
                 <div id="es-barcode-result" class="hidden bg-white shadow rounded-lg p-8 border border-slate-200 text-center">
-                    <h2 class="text-xl font-bold text-slate-800 mb-4">Generated Barcode</h2>
+                    <h2 class="text-xl font-bold text-slate-800 mb-4">Generated Paper Barcode</h2>
                     <div class="bg-slate-50 p-6 rounded-lg inline-block mb-6 border border-slate-200">
                         <svg id="es-barcode-svg"></svg>
                         <div id="es-barcode-info" class="mt-4 text-slate-700 text-sm leading-relaxed"></div>
                     </div>
                     <div class="flex flex-wrap justify-center gap-3">
-                        <button id="btn-dl-png" class="bg-green-600 text-white px-5 py-2 rounded font-medium hover:bg-green-700 transition"><i class="fa-solid fa-download mr-1"></i> PNG</button>
-                        <button id="btn-print-bc" class="bg-slate-600 text-white px-5 py-2 rounded font-medium hover:bg-slate-700 transition"><i class="fa-solid fa-print mr-1"></i> Print</button>
+                        <button id="btn-dl-png" class="bg-green-600 text-white px-5 py-2 rounded font-medium"><i class="fa-solid fa-download mr-1"></i> PNG</button>
+                        <button id="btn-print-bc" class="bg-slate-600 text-white px-5 py-2 rounded font-medium"><i class="fa-solid fa-print mr-1"></i> Print</button>
                     </div>
                 </div>
             </div>
 
-            <!-- SCAN & GRADE -->
             <div id="view-scan" class="tab-content max-w-4xl mx-auto app-eduscan">
                 <div class="bg-white shadow rounded-lg p-6 sm:p-8 border border-slate-200 mb-6 text-center">
                     <h2 class="text-2xl font-bold text-slate-800 mb-6 border-b pb-2 text-left"><i class="fa-solid fa-camera text-indigo-600 mr-2"></i> Scan Paper Barcode</h2>
-                    
-                    <div id="es-scanner-container" class="max-w-md mx-auto rounded-lg overflow-hidden border-2 border-indigo-100 shadow-inner mb-6">
-                        <div id="es-reader"></div>
-                    </div>
-                    
+                    <div id="es-scanner-container" class="max-w-md mx-auto rounded-lg overflow-hidden border-2 border-indigo-100 mb-6 hidden"><div id="es-reader"></div></div>
                     <div class="flex justify-center gap-3 mb-6">
-                        <button id="btn-start-scan" class="bg-indigo-600 text-white font-bold py-2.5 px-6 rounded hover:bg-indigo-700 transition"><i class="fa-solid fa-video mr-1"></i> Start Camera</button>
-                        <button id="btn-stop-scan" class="bg-slate-300 text-slate-800 font-bold py-2.5 px-6 rounded hover:bg-slate-400 transition hidden"><i class="fa-solid fa-stop mr-1"></i> Stop</button>
+                        <button id="btn-start-scan" class="bg-indigo-600 text-white font-bold py-2.5 px-6 rounded"><i class="fa-solid fa-video mr-1"></i> Start Camera</button>
+                        <button id="btn-stop-scan" class="bg-slate-300 text-slate-800 font-bold py-2.5 px-6 rounded hidden"><i class="fa-solid fa-stop mr-1"></i> Stop</button>
                     </div>
-
-                    <div class="relative max-w-md mx-auto">
-                        <div class="absolute inset-0 flex items-center" aria-hidden="true"><div class="w-full border-t border-slate-300"></div></div>
-                        <div class="relative flex justify-center"><span class="px-2 bg-white text-sm text-slate-500">OR MANUAL ENTRY</span></div>
-                    </div>
-
-                    <div class="mt-6 max-w-md mx-auto flex gap-2">
-                        <input type="text" id="es-manual-barcode" placeholder="Enter barcode ID..." class="flex-1 border border-slate-300 rounded-md p-2.5 bg-slate-50 focus:border-indigo-500 focus:ring-indigo-500">
-                        <button id="btn-manual-scan" class="bg-slate-800 text-white px-5 py-2.5 rounded font-bold hover:bg-slate-900 transition">Submit</button>
+                    <div class="mt-2 max-w-md mx-auto flex gap-2">
+                        <input type="text" id="es-manual-barcode" placeholder="Enter barcode ID..." class="flex-1 border border-slate-300 rounded p-2.5">
+                        <button id="btn-manual-scan" class="bg-slate-800 text-white px-5 py-2.5 rounded font-bold">Submit</button>
                     </div>
                 </div>
 
-                <!-- Grading Form (Shown after valid scan) -->
                 <div id="es-grade-section" class="hidden">
                     <div class="bg-white shadow rounded-lg p-6 sm:p-8 border border-slate-200 mb-6">
                         <h2 class="text-xl font-bold text-slate-800 mb-4 border-b pb-2 text-left"><i class="fa-solid fa-pen-to-square text-indigo-600 mr-2"></i> Enter Grade</h2>
-                        
-                        <div id="es-scanned-info" class="bg-indigo-50 border-l-4 border-indigo-500 p-4 mb-6 rounded text-indigo-900 text-sm leading-relaxed"></div>
+                        <div id="es-scanned-info" class="bg-indigo-50 border-l-4 border-indigo-500 p-4 mb-6 rounded text-indigo-900 text-sm"></div>
                         
                         <form id="es-grade-form" class="space-y-6">
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
-                                <div>
-                                    <label class="block text-sm font-bold text-slate-700 mb-1">Score / Mark *</label>
-                                    <input type="number" id="es-score" required step="0.5" class="w-full border border-slate-300 rounded-md p-2.5 bg-slate-50 text-lg font-bold text-indigo-700">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">Max Score</label>
-                                    <input type="number" id="es-max-score" value="100" class="w-full border border-slate-300 rounded-md p-2.5 bg-slate-50">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">Attempt No.</label>
-                                    <input type="number" id="es-attempt" value="1" min="1" class="w-full border border-slate-300 rounded-md p-2.5 bg-slate-50">
-                                </div>
+                                <div><label class="block text-sm font-bold text-slate-700 mb-1">Total Score *</label><input type="number" id="es-score" required step="0.5" class="w-full border border-slate-300 rounded p-2.5 font-bold text-indigo-700"></div>
+                                <div><label class="block text-sm font-medium text-slate-700 mb-1">Max Score</label><input type="number" id="es-max-score" value="100" class="w-full border border-slate-300 rounded p-2.5"></div>
+                                <div><label class="block text-sm font-medium text-slate-700 mb-1">Attempt No.</label><input type="number" id="es-attempt" value="1" class="w-full border border-slate-300 rounded p-2.5"></div>
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Overall Comments</label>
-                                <textarea id="es-comments" rows="2" class="w-full border border-slate-300 rounded-md p-2.5 bg-slate-50"></textarea>
-                            </div>
-
-                            <div class="bg-red-50 p-5 rounded border border-red-100">
-                                <h3 class="font-bold text-red-800 mb-3"><i class="fa-solid fa-circle-exclamation mr-1"></i> Log Wrong Questions (Optional)</h3>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                                    <input type="text" id="es-wq-num" placeholder="Q. Number (e.g. 5a)" class="border border-slate-300 rounded-md p-2">
-                                    <input type="text" id="es-wq-remark" placeholder="Remark (e.g. Careless)" class="border border-slate-300 rounded-md p-2">
+                            
+                            <!-- Individual Question Marks Logging -->
+                            <div class="bg-blue-50 p-5 rounded border border-blue-100">
+                                <h3 class="font-bold text-blue-800 mb-3"><i class="fa-solid fa-list-ol mr-1"></i> Log Individual Question Marks (Optional)</h3>
+                                <p class="text-xs text-blue-600 mb-3">Logs will auto-link to corresponding sub-barcodes.</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 mb-4">
+                                    <input type="text" id="es-iq-num" placeholder="Q. Num (e.g. 1, 1biii - No 'Q')" class="border border-slate-300 rounded p-2">
+                                    <input type="number" id="es-iq-score" placeholder="Score" step="0.5" class="border border-slate-300 rounded p-2">
+                                    <input type="number" id="es-iq-max" placeholder="Max" step="0.5" class="border border-slate-300 rounded p-2">
+                                    <button type="button" id="btn-es-add-iq" class="bg-blue-600 text-white rounded font-bold hover:bg-blue-700">Add</button>
                                 </div>
-                                <div class="space-y-3">
-                                    <textarea id="es-wq-text" rows="1" placeholder="Question text..." class="w-full border border-slate-300 rounded-md p-2"></textarea>
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <textarea id="es-wq-user" rows="1" placeholder="Student Answer" class="w-full border border-slate-300 rounded-md p-2"></textarea>
-                                        <textarea id="es-wq-correct" rows="1" placeholder="Correct Answer" class="w-full border border-slate-300 rounded-md p-2"></textarea>
-                                    </div>
-                                    <button type="button" id="btn-es-add-wq" class="bg-red-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-red-700">+ Add Question Log</button>
-                                </div>
-                                <div id="es-wq-list" class="mt-4 space-y-2"></div>
+                                <div id="es-iq-list" class="space-y-2"></div>
                             </div>
 
-                            <div class="pt-4 border-t border-slate-200">
-                                <button type="submit" class="w-full bg-green-600 text-white font-bold py-3 rounded-md hover:bg-green-700 shadow-md text-lg transition">💾 Save & Sync Grade</button>
-                            </div>
+                            <div class="pt-4 border-t border-slate-200"><button type="submit" class="w-full bg-green-600 text-white font-bold py-3 rounded-md shadow hover:bg-green-700 text-lg">💾 Save & Sync Grade</button></div>
                         </form>
                     </div>
                 </div>
             </div>
 
-            <!-- STUDENT RECORDS & DETAIL VIEW -->
             <div id="view-records" class="tab-content max-w-6xl mx-auto app-eduscan">
-                
-                <!-- Main List View -->
                 <div id="es-records-list-view">
                     <div class="bg-white shadow rounded-lg p-6 border border-slate-200 mb-6">
                         <div class="flex justify-between items-center mb-6">
                             <h2 class="text-2xl font-bold text-slate-800"><i class="fa-solid fa-users text-indigo-600 mr-2"></i> Paper Database</h2>
-                            <button id="btn-es-sync-records" class="bg-indigo-50 text-indigo-700 px-4 py-2 rounded font-bold border border-indigo-200 hover:bg-indigo-100 transition"><i class="fa-solid fa-rotate mr-1"></i> Sync Cloud</button>
+                            <button id="btn-es-sync-records" class="bg-indigo-50 text-indigo-700 px-4 py-2 rounded font-bold border border-indigo-200 hover:bg-indigo-100"><i class="fa-solid fa-rotate mr-1"></i> Sync</button>
                         </div>
-                        
-                        <div class="flex overflow-x-auto space-x-2 border-b border-slate-100 pb-3 mb-4 scrollbar-hide" id="es-record-filters">
-                            <!-- Filters dynamic -->
-                        </div>
-
+                        <div class="flex overflow-x-auto space-x-2 border-b border-slate-100 pb-3 mb-4 scrollbar-hide" id="es-record-filters"></div>
                         <div class="flex flex-col sm:flex-row gap-4 mb-6">
-                            <div class="flex-1 relative">
-                                <i class="fa-solid fa-search absolute left-3 top-3 text-slate-400"></i>
-                                <input type="text" id="es-search-record" placeholder="Search ID or Assessment..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border rounded-md focus:border-indigo-500">
-                            </div>
-                            <button id="btn-es-scan-find" class="bg-slate-800 text-white px-4 py-2 rounded font-bold hover:bg-slate-900 transition whitespace-nowrap"><i class="fa-solid fa-camera mr-1"></i> Scan to Find</button>
+                            <div class="flex-1 relative"><i class="fa-solid fa-search absolute left-3 top-3 text-slate-400"></i><input type="text" id="es-search-record" placeholder="Search ID or Assessment..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border rounded-md"></div>
+                            <button id="btn-es-scan-find" class="bg-slate-800 text-white px-4 rounded font-bold hover:bg-slate-900"><i class="fa-solid fa-camera mr-1"></i> Scan</button>
                         </div>
-                        
-                        <div id="es-record-scan-container" class="hidden max-w-sm mx-auto mb-6">
-                            <div id="es-record-reader" class="rounded-lg overflow-hidden border"></div>
-                            <button id="btn-es-scan-find-stop" class="mt-2 w-full bg-slate-200 text-slate-700 py-2 rounded font-bold hover:bg-slate-300">Stop Scanner</button>
-                        </div>
-
+                        <div id="es-record-scan-container" class="hidden max-w-sm mx-auto mb-6"><div id="es-record-reader"></div><button id="btn-es-scan-find-stop" class="w-full bg-slate-200 mt-2 py-2 font-bold">Stop</button></div>
                         <div id="es-student-list" class="space-y-3 pb-10"></div>
                     </div>
                 </div>
 
-                <!-- Detail View -->
                 <div id="es-record-detail-view" class="hidden">
                     <div class="bg-white shadow rounded-lg p-6 border border-slate-200 mb-6">
                         <div class="flex justify-between items-start mb-6">
-                            <h2 class="text-2xl font-bold text-slate-800"><i class="fa-solid fa-user-graduate text-indigo-600 mr-2"></i> Paper Profile</h2>
-                            <div class="space-x-2">
-                                <button id="btn-es-back-records" class="bg-slate-800 text-white px-4 py-2 rounded font-bold hover:bg-slate-900 transition">Back to List</button>
-                            </div>
+                            <h2 class="text-2xl font-bold text-slate-800"><i class="fa-solid fa-file-invoice text-indigo-600 mr-2"></i> Unified Paper Profile</h2>
+                            <button id="btn-es-back-records" class="bg-slate-800 text-white px-4 py-2 rounded font-bold">Back to List</button>
                         </div>
                         <div id="es-detail-content" class="space-y-6"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- ANALYTICS -->
             <div id="view-stats" class="tab-content max-w-6xl mx-auto app-eduscan">
-                <div class="bg-white shadow rounded-lg p-6 border border-slate-200 mb-6">
+                <div class="bg-white shadow rounded-lg p-6 border border-slate-200">
                     <h2 class="text-2xl font-bold text-slate-800 mb-6"><i class="fa-solid fa-chart-pie text-indigo-600 mr-2"></i> System Analytics</h2>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                        <div class="bg-slate-50 p-4 rounded text-center border border-slate-200">
-                            <div class="text-3xl font-black text-indigo-600" id="es-stat-papers">0</div>
-                            <div class="text-xs text-slate-500 font-bold uppercase mt-1">Unique Papers</div>
-                        </div>
-                        <div class="bg-slate-50 p-4 rounded text-center border border-slate-200">
-                            <div class="text-3xl font-black text-green-600" id="es-stat-grades">0</div>
-                            <div class="text-xs text-slate-500 font-bold uppercase mt-1">Grades Logged</div>
-                        </div>
-                        <div class="bg-slate-50 p-4 rounded text-center border border-slate-200">
-                            <div class="text-3xl font-black text-blue-600" id="es-stat-avg">0%</div>
-                            <div class="text-xs text-slate-500 font-bold uppercase mt-1">Global Average</div>
-                        </div>
-                        <div class="bg-slate-50 p-4 rounded text-center border border-slate-200">
-                            <div class="text-3xl font-black text-orange-600" id="es-stat-subj">0</div>
-                            <div class="text-xs text-slate-500 font-bold uppercase mt-1">Active Subjects</div>
-                        </div>
-                    </div>
-
-                    <div class="border-t border-slate-200 pt-6">
-                        <h3 class="text-lg font-bold text-slate-800 mb-4">Wrong Question Database</h3>
-                        <div id="es-wq-filter-buttons" class="flex flex-wrap gap-2 mb-4"></div>
-                        <div id="es-wq-analysis-result" class="space-y-4 max-h-[600px] overflow-y-auto pr-2"></div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="bg-slate-50 p-4 rounded text-center border"><div class="text-3xl font-black text-indigo-600" id="es-stat-papers">0</div><div class="text-xs text-slate-500 font-bold uppercase mt-1">Unique Papers</div></div>
+                        <div class="bg-slate-50 p-4 rounded text-center border"><div class="text-3xl font-black text-green-600" id="es-stat-grades">0</div><div class="text-xs text-slate-500 font-bold uppercase mt-1">Grades Logged</div></div>
+                        <div class="bg-slate-50 p-4 rounded text-center border"><div class="text-3xl font-black text-blue-600" id="es-stat-avg">0%</div><div class="text-xs text-slate-500 font-bold uppercase mt-1">Global Average</div></div>
+                        <div class="bg-slate-50 p-4 rounded text-center border"><div class="text-3xl font-black text-orange-600" id="es-stat-subj">0</div><div class="text-xs text-slate-500 font-bold uppercase mt-1">Active Subjects</div></div>
                     </div>
                 </div>
             </div>
@@ -590,397 +470,240 @@
         </div>
     </main>
 
-    <!-- Global Overlays -->
-    <div id="loading-overlay" class="fixed inset-0 bg-slate-900 bg-opacity-70 z-[100] items-center justify-center flex-col text-white transition-opacity">
-        <i class="fa-solid fa-circle-notch fa-spin text-5xl mb-4 text-indigo-400"></i>
-        <div id="loading-text" class="text-xl font-medium tracking-wide">Processing...</div>
-    </div>
-
+    <div id="loading-overlay" class="fixed inset-0 bg-slate-900 bg-opacity-70 z-[100] items-center justify-center flex-col text-white transition-opacity"><i class="fa-solid fa-circle-notch fa-spin text-5xl mb-4 text-indigo-400"></i><div id="loading-text" class="text-xl font-medium">Processing...</div></div>
     <div id="toast-container" class="fixed bottom-5 right-5 z-[100] flex flex-col gap-2 pointer-events-none"></div>
 
     <script>
-        // ==========================================
-        // GLOBAL APP STATE & UTILITIES
-        // ==========================================
         const AppState = {
-            gasUrl: localStorage.getItem('edusuite_gas_url') || '',
-            activeApp: 'logbook', // 'logbook' | 'eduscan'
-            mistakes: {
-                items: [],
-                subjects: ['Chinese', 'English', 'Math (M0)', 'Math (M2)', 'Physics', 'Chemistry', 'Biology'],
-                sourcePriority: ['Past Paper', 'Quiz or Exam', 'Exercise'],
-                filters: { subject: 'All', source: '', difficulty: '', familiarity: '', search: '' },
-                isEditing: false, editId: null, editImages: { q: '', a: '' },
-                charts: {} 
-            },
-            eduscan: {
-                students: [],
-                grades: [],
-                html5QrCode: null,
-                html5QrCodeRecord: null,
-                currentScannedData: null,
-                currentWrongQs: [],
-                performanceChart: null,
-                filters: { subject: 'All', search: '' }
-            }
+            gasUrl: localStorage.getItem('edusuite_gas_url') || '', activeApp: 'logbook',
+            mistakes: { items: [], subjects: ['Chinese', 'English', 'Mathematics', 'Physics', 'Chemistry', 'Biology', 'M2', 'CS'], sourcePriority: ['Past Paper', 'Quiz or Exam', 'Exercise'], filters: { subject: 'All', source: '', difficulty: '', familiarity: '', search: '' }, isEditing: false, editId: null, editImages: { q: '', a: '' }, charts: {}, scanner: null, reviewScanner: null },
+            eduscan: { students: [], grades: [], html5QrCode: null, html5QrCodeRecord: null, currentScannedData: null, currentIndividualMarks: [], performanceChart: null, filters: { subject: 'All', search: '' } }
         };
-
-        const DOM = {
-            loader: document.getElementById('loading-overlay'), 
-            loaderText: document.getElementById('loading-text'),
-            toastContainer: document.getElementById('toast-container'), 
-            gasUrlInput: document.getElementById('gas-url')
-        };
+        const DOM = { loader: document.getElementById('loading-overlay'), loaderText: document.getElementById('loading-text'), toastContainer: document.getElementById('toast-container'), gasUrlInput: document.getElementById('gas-url') };
 
         function showLoader(text = 'Processing...') { DOM.loaderText.textContent = text; DOM.loader.classList.add('active'); }
         function hideLoader() { DOM.loader.classList.remove('active'); }
-
         function showToast(message, type = 'success') {
             const toast = document.createElement('div');
             const bg = type === 'success' ? 'bg-green-600' : (type === 'error' ? 'bg-red-600' : 'bg-slate-800');
-            const icon = type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-triangle-exclamation' : 'fa-info-circle');
-            toast.className = `toast-enter ${bg} text-white px-5 py-3 rounded shadow-lg flex items-center min-w-[250px] transition-all duration-300 pointer-events-auto`;
-            toast.innerHTML = `<i class="fa-solid ${icon} mr-3 text-lg"></i> <span class="font-medium">${message}</span>`;
+            toast.className = `toast-enter ${bg} text-white px-5 py-3 rounded shadow-lg flex items-center min-w-[250px] pointer-events-auto`;
+            toast.innerHTML = `<i class="fa-solid fa-circle-info mr-3"></i> <span class="font-medium">${message}</span>`;
             DOM.toastContainer.appendChild(toast);
             requestAnimationFrame(() => { toast.classList.remove('toast-enter'); toast.classList.add('toast-enter-active'); });
             setTimeout(() => { toast.classList.remove('toast-enter-active'); toast.classList.add('toast-leave-active'); setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
-        // ==========================================
-        // NAVIGATION LOGIC
-        // ==========================================
+        // ====== NAV ======
         function initNav() {
-            document.querySelectorAll('.app-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => switchApp(e.currentTarget.dataset.app));
-            });
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => switchTab(e.currentTarget.dataset.target, e.currentTarget));
-            });
-            
-            // Set initial nav states
+            document.querySelectorAll('.app-btn').forEach(btn => btn.addEventListener('click', (e) => switchApp(e.currentTarget.dataset.app)));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.addEventListener('click', (e) => switchTab(e.currentTarget.dataset.target, e.currentTarget)));
             if(AppState.gasUrl) DOM.gasUrlInput.value = AppState.gasUrl;
-            switchApp('logbook');
-            if(AppState.gasUrl) fetchAllData();
+            switchApp('logbook'); if(AppState.gasUrl) fetchAllData();
         }
 
         function switchApp(appName) {
             AppState.activeApp = appName;
-            // Update Primary Nav Buttons
-            document.querySelectorAll('.app-btn').forEach(btn => {
-                if(btn.dataset.app === appName) {
-                    btn.classList.add('bg-indigo-700'); btn.classList.remove('hover:bg-indigo-600');
-                } else {
-                    btn.classList.remove('bg-indigo-700'); btn.classList.add('hover:bg-indigo-600');
-                }
-            });
-
-            // Toggle Subnavs
+            document.querySelectorAll('.app-btn').forEach(btn => { if(btn.dataset.app === appName) { btn.classList.add('bg-indigo-700'); btn.classList.remove('hover:bg-indigo-600'); } else { btn.classList.remove('bg-indigo-700'); btn.classList.add('hover:bg-indigo-600'); } });
             document.getElementById('subnav-logbook').classList.toggle('hidden', appName !== 'logbook');
             document.getElementById('subnav-eduscan').classList.toggle('hidden', appName !== 'eduscan');
-
-            // Hide all tab contents
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-
-            // Auto-switch to default tab for the app
-            if(appName === 'logbook') {
-                const target = document.querySelector('#subnav-logbook .nav-btn');
-                switchTab(target.dataset.target, target);
-            } else {
-                const target = document.querySelector('#subnav-eduscan .nav-btn');
-                switchTab(target.dataset.target, target);
-                renderEsRecords();
-                updateEsStats();
-            }
+            if(appName === 'logbook') { switchTab(document.querySelector('#subnav-logbook .nav-btn').dataset.target, document.querySelector('#subnav-logbook .nav-btn')); } 
+            else { switchTab(document.querySelector('#subnav-eduscan .nav-btn').dataset.target, document.querySelector('#subnav-eduscan .nav-btn')); renderEsRecords(); updateEsStats(); }
         }
 
         function switchTab(targetId, btnElement) {
-            // Stop scanners if running
             if(AppState.eduscan.html5QrCode?.isScanning) AppState.eduscan.html5QrCode.stop().catch(()=>{});
             if(AppState.eduscan.html5QrCodeRecord?.isScanning) AppState.eduscan.html5QrCodeRecord.stop().catch(()=>{});
-            document.getElementById('es-scanner-container').classList.add('hidden');
-            document.getElementById('btn-stop-scan').classList.add('hidden');
-            document.getElementById('btn-start-scan').classList.remove('hidden');
+            if(AppState.mistakes.scanner?.isScanning) AppState.mistakes.scanner.stop().catch(()=>{});
+            if(AppState.mistakes.reviewScanner?.isScanning) AppState.mistakes.reviewScanner.stop().catch(()=>{});
+            
+            document.querySelectorAll('[id$="-scanner-container"]').forEach(c => c.classList.add('hidden'));
+            document.getElementById('btn-start-scan')?.classList.remove('hidden'); document.getElementById('btn-stop-scan')?.classList.add('hidden');
 
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.getElementById(targetId).classList.add('active');
             
-            if(btnElement && btnElement.parentElement.classList.contains('app-subnav')) {
-                const siblings = btnElement.parentElement.querySelectorAll('.nav-btn');
-                siblings.forEach(b => {
-                    b.classList.remove('text-indigo-600', 'border-indigo-600');
-                    b.classList.add('text-slate-500', 'border-transparent');
-                });
-                btnElement.classList.remove('text-slate-500', 'border-transparent');
-                btnElement.classList.add('text-indigo-600', 'border-indigo-600');
+            if(btnElement) {
+                const subnav = btnElement.closest('.app-subnav');
+                if(subnav) {
+                    subnav.querySelectorAll('.nav-btn').forEach(b => {
+                        b.classList.remove('text-indigo-600', 'border-indigo-600', 'font-bold');
+                        b.classList.add('text-slate-500', 'border-transparent', 'font-medium');
+                    });
+                    btnElement.classList.remove('text-slate-500', 'border-transparent', 'font-medium');
+                    btnElement.classList.add('text-indigo-600', 'border-indigo-600', 'font-bold');
+                }
             }
         }
 
-        // ==========================================
-        // BACKEND SYNC (GOOGLE APPS SCRIPT)
-        // ==========================================
-        document.getElementById('btn-save-settings').addEventListener('click', () => {
-            const url = DOM.gasUrlInput.value.trim();
-            if (!url) return showToast('URL cannot be empty', 'error');
-            localStorage.setItem('edusuite_gas_url', url);
-            AppState.gasUrl = url;
-            showToast('Settings Saved Successfully');
-        });
-
-        document.getElementById('btn-test-connection').addEventListener('click', fetchAllData);
-        document.getElementById('btn-refresh-data').addEventListener('click', fetchAllData);
-        document.getElementById('btn-es-sync-records').addEventListener('click', fetchAllData);
-
+        // ====== DB SYNC ======
+        document.getElementById('btn-save-settings').addEventListener('click', () => { AppState.gasUrl = DOM.gasUrlInput.value.trim(); localStorage.setItem('edusuite_gas_url', AppState.gasUrl); showToast('Settings Saved'); });
+        document.getElementById('btn-test-connection').addEventListener('click', fetchAllData); document.getElementById('btn-refresh-data').addEventListener('click', fetchAllData); document.getElementById('btn-es-sync-records').addEventListener('click', fetchAllData);
+        
         async function fetchAllData() {
-            if (!AppState.gasUrl) return showToast('Please save your Web App URL in settings first', 'error');
-            showLoader('Syncing from Cloud...');
-            try {
-                const res = await fetch(AppState.gasUrl + '?action=get', { method: "GET", redirect: "follow" });
-                const json = await res.json();
-                if(json.status === 'success') {
-                    AppState.mistakes.items = json.data.errors || [];
-                    AppState.eduscan.students = json.data.students || [];
-                    AppState.eduscan.grades = json.data.grades || [];
-                    
-                    renderLogbookStats();
-                    renderLogbookCards();
-                    renderEsRecords();
-                    updateEsStats();
-                    showToast('Data Synced Successfully');
-                } else throw new Error(json.message || 'Invalid response');
-            } catch (err) { 
-                console.error(err);
-                showToast('Sync Failed. Check URL.', 'error'); 
-            }
-            hideLoader();
+            if(!AppState.gasUrl) return showToast('No Web App URL', 'error'); showLoader('Syncing...');
+            try { 
+                // Fix 2: Cache buster added to prevent stale JSON data after an edit
+                const res = await fetch(AppState.gasUrl+'?action=get&_t=' + Date.now()); 
+                const j = await res.json(); 
+                if(j.status==='success'){ 
+                    AppState.mistakes.items=j.data.errors||[]; AppState.eduscan.students=j.data.students||[]; AppState.eduscan.grades=j.data.grades||[]; 
+                    renderLogbookStats(); renderLogbookCards(); renderEsRecords(); updateEsStats(); 
+                    showToast('Synced!'); 
+                } else throw new Error(j.message); 
+            } catch(e){ showToast('Sync Failed','error'); } hideLoader();
         }
 
-        async function postData(payload, successMsg = 'Saved Successfully') {
-            if (!AppState.gasUrl) { showToast('No DB URL set', 'error'); return false; }
-            showLoader();
-            try {
-                const res = await fetch(AppState.gasUrl, { method: 'POST', body: JSON.stringify(payload) });
-                const result = await res.json();
-                if(result.status === 'success') {
-                    showToast(successMsg);
-                    await fetchAllData(); // Refresh state automatically
-                    return true;
-                } else throw new Error(result.message);
-            } catch (err) {
-                showToast(`Failed: ${err.message}`, 'error');
-                hideLoader();
-                return false;
-            }
+        async function postData(payload, successMsg) {
+            if(!AppState.gasUrl) return false; showLoader();
+            try { 
+                const res = await fetch(AppState.gasUrl, {method:'POST',body:JSON.stringify(payload)}); 
+                const j = await res.json(); 
+                if(j.status==='success'){ 
+                    showToast(successMsg); await fetchAllData(); return true; 
+                } else throw new Error(j.message); 
+            } catch(e){ showToast('Failed','error'); hideLoader(); return false; }
         }
 
-        // ==========================================
-        // APP 1: MISTAKES LOGBOOK LOGIC
-        // ==========================================
-        function resizeImageToBase64(file) {
-            return new Promise((resolve, reject) => {
-                if(!file) return resolve('');
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
-                        let w = img.width; let h = img.height;
-                        if (w > h) { if (w > 600) { h *= 600 / w; w = 600; } } 
-                        else { if (h > 600) { w *= 600 / h; h = 600; } }
-                        canvas.width = w; canvas.height = h; ctx.drawImage(img, 0, 0, w, h);
-                        resolve(canvas.toDataURL('image/jpeg', 0.6));
-                    };
-                    img.onerror = reject; img.src = e.target.result;
-                };
-                reader.onerror = reject; reader.readAsDataURL(file);
+        // ====== BARCODE SCANNER UTILS ======
+        function startScanner(elementId, onSuccess) {
+            const scanner = new Html5Qrcode(elementId);
+            scanner.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 100 } }, (text) => { 
+                // Fix 1: Properly chain the stop promise to guarantee UI closes
+                scanner.stop().then(() => { onSuccess(text); }).catch(err => console.log(err)); 
+            }, ()=>{}).catch(e => showToast('Camera access denied', 'error'));
+            return scanner;
+        }
+
+        // ====== APP 1: MISTAKES LOGBOOK ======
+        document.getElementById('btn-logbook-scan-parent').addEventListener('click', () => {
+            document.getElementById('logbook-scanner-container').classList.remove('hidden');
+            AppState.mistakes.scanner = startScanner("logbook-reader", (code) => {
+                document.getElementById('logbook-scanner-container').classList.add('hidden');
+                document.getElementById('field-parent-bc').value = code;
+                const match = AppState.eduscan.students.find(s => s.id === code);
+                if(match) {
+                    document.getElementById('field-subject').value = match.subject;
+                    if(match.secondary) document.getElementById('field-secondary').value = match.secondary;
+                    const r = document.querySelector(`input[name="source_type"][value="${match.sourceType}"]`);
+                    if(r) { r.checked = true; r.dispatchEvent(new Event('change')); }
+                    if (match.sourceType === 'Past Paper') { let pts = match.sourceDetails.split(' '); if(pts[0]) document.getElementById('field-pp-type').value = pts[0]; if(pts[1]) document.getElementById('field-pp-year').value = pts[1]; let pm = match.sourceDetails.match(/Paper\s?[\w]+/i); if(pm) document.getElementById('field-pp-paper').value = pm[0]; } 
+                    else if (match.sourceType === 'Exercise') document.getElementById('field-exe-name').value = match.sourceDetails; else if (match.sourceType === 'Quiz or Exam') document.getElementById('field-quiz-name').value = match.sourceDetails;
+                    showToast('Paper auto-filled!');
+                } else showToast('Barcode loaded, but not found in DB', 'error');
             });
-        }
+        });
+        document.getElementById('btn-logbook-scan-stop').addEventListener('click', () => { if(AppState.mistakes.scanner) AppState.mistakes.scanner.stop(); document.getElementById('logbook-scanner-container').classList.add('hidden'); });
 
         function resetLogbookForm() {
-            const M = AppState.mistakes;
-            M.isEditing = false; M.editId = null; M.editImages = { q: '', a: '' };
+            const M = AppState.mistakes; M.isEditing = false; M.editId = null; M.editImages = {q:'',a:''};
             document.getElementById('add-error-form').reset();
-            document.getElementById('preview-q-img').classList.add('hidden'); document.getElementById('preview-a-img').classList.add('hidden');
+            document.getElementById('field-parent-bc').value = ''; document.getElementById('field-parent-qnum').value = '';
+            document.querySelectorAll('img[id^="preview"]').forEach(i=>i.classList.add('hidden'));
             document.getElementById('source-details-container').classList.add('hidden'); document.getElementById('field-rc-other').classList.add('hidden');
             document.getElementById('form-title').innerHTML = '<i class="fa-solid fa-pen-to-square text-indigo-600 mr-2"></i> 增加錯題 (Add New Error)';
-            document.getElementById('submit-btn-text').textContent = 'Save & Sync to Sheet';
-            document.getElementById('btn-cancel-edit').classList.add('hidden');
+            document.getElementById('submit-btn-text').textContent = 'Save & Sync'; document.getElementById('btn-cancel-edit').classList.add('hidden');
         }
         document.getElementById('btn-cancel-edit').addEventListener('click', resetLogbookForm);
 
-        document.querySelectorAll('input[name="source_type"]').forEach(radio => {
-            radio.addEventListener('change', (e) => {
-                document.getElementById('source-details-container').classList.remove('hidden');
-                document.getElementById('source_past_paper_div').classList.add('hidden'); 
-                document.getElementById('source_exercise_div').classList.add('hidden'); 
-                document.getElementById('source_quiz_div').classList.add('hidden');
-                if (e.target.value === 'Past Paper') document.getElementById('source_past_paper_div').classList.remove('hidden');
-                if (e.target.value === 'Exercise') document.getElementById('source_exercise_div').classList.remove('hidden');
-                if (e.target.value === 'Quiz or Exam') document.getElementById('source_quiz_div').classList.remove('hidden');
-            });
-        });
+        document.querySelectorAll('input[name="source_type"]').forEach(r => r.addEventListener('change', (e) => {
+            document.getElementById('source-details-container').classList.remove('hidden'); document.getElementById('source_past_paper_div').classList.add('hidden'); document.getElementById('source_exercise_div').classList.add('hidden'); document.getElementById('source_quiz_div').classList.add('hidden');
+            if(e.target.value==='Past Paper') document.getElementById('source_past_paper_div').classList.remove('hidden'); if(e.target.value==='Exercise') document.getElementById('source_exercise_div').classList.remove('hidden'); if(e.target.value==='Quiz or Exam') document.getElementById('source_quiz_div').classList.remove('hidden');
+        }));
+        document.getElementById('rc_other_cb').addEventListener('change', (e) => { const tf = document.getElementById('field-rc-other'); if(e.target.checked) tf.classList.remove('hidden'); else { tf.classList.add('hidden'); tf.value=''; } });
+        ['q','a'].forEach(p => document.getElementById(`field-${p}-img`).addEventListener('change', function() { const v=document.getElementById(`preview-${p}-img`); if(this.files[0]){v.src=URL.createObjectURL(this.files[0]);v.classList.remove('hidden');}else v.classList.add('hidden'); }));
 
-        document.getElementById('rc_other_cb').addEventListener('change', (e) => {
-            const tf = document.getElementById('field-rc-other');
-            if (e.target.checked) tf.classList.remove('hidden'); else { tf.classList.add('hidden'); tf.value = ''; }
-        });
-
-        ['q', 'a'].forEach(prefix => {
-            document.getElementById(`field-${prefix}-img`).addEventListener('change', function() {
-                const preview = document.getElementById(`preview-${prefix}-img`);
-                if(this.files[0]) { preview.src = URL.createObjectURL(this.files[0]); preview.classList.remove('hidden'); } else { preview.classList.add('hidden'); preview.src = ''; }
-            });
-        });
+        function rImg(f){ return new Promise((rs,rj)=>{ if(!f) return rs(''); const rd=new FileReader(); rd.onload=(e)=>{ const i=new Image(); i.onload=()=>{ const c=document.createElement('canvas'); const ctx=c.getContext('2d'); let w=i.width; let h=i.height; if(w>h){if(w>600){h*=600/w;w=600;}}else{if(h>600){w*=600/h;h=600;}} c.width=w;c.height=h;ctx.drawImage(i,0,0,w,h); rs(c.toDataURL('image/jpeg',0.6)); }; i.onerror=rj; i.src=e.target.result; }; rd.onerror=rj; rd.readAsDataURL(f); }); }
 
         document.getElementById('add-error-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const M = AppState.mistakes;
-            const srcType = document.querySelector('input[name="source_type"]:checked')?.value || '';
-            let srcDetails = '';
+            e.preventDefault(); const M = AppState.mistakes; const sT = document.querySelector('input[name="source_type"]:checked')?.value||''; let sD = '';
+            if(sT==='Past Paper') sD = `${document.getElementById('field-pp-type').value} ${document.getElementById('field-pp-year').value} ${document.getElementById('field-pp-paper').value||''}`.trim().replace(/\s+/g,' ');
+            else if(sT==='Exercise') sD = document.getElementById('field-exe-name').value; else if(sT==='Quiz or Exam') sD = document.getElementById('field-quiz-name').value;
+            const rc = Array.from(document.querySelectorAll('input[name="root_cause"]:checked')).map(c=>c.value); if(document.getElementById('rc_other_cb').checked) rc.push(`Other: ${document.getElementById('field-rc-other').value}`);
+            let qI = await rImg(document.getElementById('field-q-img').files[0]); let aI = await rImg(document.getElementById('field-a-img').files[0]);
+            if(M.isEditing) { if(!document.getElementById('field-q-img').files[0]) qI = M.editImages.q; if(!document.getElementById('field-a-img').files[0]) aI = M.editImages.a; }
+
+            const parentBc = document.getElementById('field-parent-bc').value.trim();
+            const specificQ = document.getElementById('field-parent-qnum').value.trim() || document.getElementById('field-pp-qnum').value.trim();
+            const subBc = (parentBc && specificQ) ? parentBc + specificQ.replace(/\s+/g,'') : '';
+
+            const payload = { action: M.isEditing?'edit_error':'add_error', id: M.editId, data: { Subject: document.getElementById('field-subject').value, SecondaryLevel: document.getElementById('field-secondary').value||'', Chapter: document.getElementById('field-chapter').value||'-', KeyPoint: document.getElementById('field-keypoint').value||'-', SourceType: sT, SourceDetails: sD, QuestionText: document.getElementById('field-question').value, QuestionImage: qI, WrongAnswer: document.getElementById('field-wrong-ans').value, CorrectAnswer: document.getElementById('field-correct-ans').value, AnswerImage: aI, Comments: document.getElementById('field-comments').value||'-', Difficulty: document.querySelector('input[name="difficulty"]:checked')?.value||'', Familiarity: document.querySelector('input[name="familiarity"]:checked')?.value||'', RootCause: rc.join(', '), ParentBarcode: parentBc, SubBarcode: subBc, QuestionNumber: specificQ } };
+
+            // Fix 2 (part 2): Capture state before resetting so tab switch happens correctly
+            const wasEditing = M.isEditing;
             
-            if(srcType === 'Past Paper') {
-                const pt = document.getElementById('field-pp-type').value;
-                const py = document.getElementById('field-pp-year').value;
-                const pp = document.getElementById('field-pp-paper').value;
-                const pq = document.getElementById('field-pp-qnum').value;
-                srcDetails = `${pt} ${py} ${pp ? pp : ''} ${pq ? 'Q'+pq : ''}`.trim().replace(/\s+/g, ' ');
-            }
-            else if(srcType === 'Exercise') srcDetails = document.getElementById('field-exe-name').value;
-            else if(srcType === 'Quiz or Exam') srcDetails = document.getElementById('field-quiz-name').value;
-
-            const rootCauses = Array.from(document.querySelectorAll('input[name="root_cause"]:checked')).map(cb => cb.value);
-            if(document.getElementById('rc_other_cb').checked) rootCauses.push(`Other: ${document.getElementById('field-rc-other').value}`);
-
-            let qImgB64 = await resizeImageToBase64(document.getElementById('field-q-img').files[0]);
-            let aImgB64 = await resizeImageToBase64(document.getElementById('field-a-img').files[0]);
-            if (M.isEditing) {
-                if (!document.getElementById('field-q-img').files[0]) qImgB64 = M.editImages.q;
-                if (!document.getElementById('field-a-img').files[0]) aImgB64 = M.editImages.a;
-            }
-
-            const payload = {
-                action: M.isEditing ? 'edit_error' : 'add_error', id: M.editId,
-                data: {
-                    Subject: document.getElementById('field-subject').value, Chapter: document.getElementById('field-chapter').value || '-', KeyPoint: document.getElementById('field-keypoint').value || '-',
-                    SourceType: srcType, SourceDetails: srcDetails, QuestionText: document.getElementById('field-question').value, QuestionImage: qImgB64,
-                    WrongAnswer: document.getElementById('field-wrong-ans').value, CorrectAnswer: document.getElementById('field-correct-ans').value, AnswerImage: aImgB64,
-                    Comments: document.getElementById('field-comments').value || '-', Difficulty: document.querySelector('input[name="difficulty"]:checked')?.value || '',
-                    Familiarity: document.querySelector('input[name="familiarity"]:checked')?.value || '', RootCause: rootCauses.join(', ')
+            if(await postData(payload, wasEditing ? 'Updated!' : 'Saved!')) {
+                resetLogbookForm();
+                if(subBc) {
+                    JsBarcode("#logbook-barcode-svg", subBc, { format: "CODE128", width: 2, height: 60, displayValue: true, fontSize: 14 });
+                    document.getElementById('logbook-barcode-info').innerHTML = `Linked to: ${parentBc}<br>Question: Q${specificQ}<br>Sub-Barcode: ${subBc}`;
+                    document.getElementById('sub-barcode-result').classList.remove('hidden');
                 }
-            };
-
-            const success = await postData(payload, M.isEditing ? 'Record updated!' : 'Record saved!');
-            if (success) { resetLogbookForm(); if(M.isEditing) switchTab('view-review-errors', document.querySelector('[data-target="view-review-errors"]')); }
+                if(wasEditing) switchTab('view-review-errors', document.querySelector('[data-target="view-review-errors"]'));
+            }
         });
 
-        function renderLogbookStats() {
-            const items = AppState.mistakes.items;
-            document.getElementById('stat-total-errors').textContent = items.length;
-            const subCounts = {}; AppState.mistakes.subjects.forEach(s => subCounts[s] = 0);
-            const dateCounts = {};
-            items.forEach(it => {
-                if(subCounts[it.Subject] !== undefined) subCounts[it.Subject]++;
-                const d = new Date(it.Timestamp).toLocaleDateString("en-US", { month:'short', day:'numeric' });
-                dateCounts[d] = (dateCounts[d] || 0) + 1;
-            });
-            
-            const M = AppState.mistakes;
-            if(M.charts.subjects) M.charts.subjects.destroy();
-            if(M.charts.timeline) M.charts.timeline.destroy();
-            M.charts.subjects = new Chart(document.getElementById('chart-err-subjects').getContext('2d'), { type: 'doughnut', data: { labels: Object.keys(subCounts), datasets: [{ data: Object.values(subCounts), backgroundColor: ['#ef4444','#f97316','#f59e0b','#84cc16','#10b981','#06b6d4','#3b82f6'], borderWidth: 1 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 10, font: {size: 10} } } } } });
-            M.charts.timeline = new Chart(document.getElementById('chart-err-timeline').getContext('2d'), { type: 'line', data: { labels: Object.keys(dateCounts), datasets: [{ label: 'Errors Added', data: Object.values(dateCounts), borderColor: '#4f46e5', backgroundColor: 'rgba(79, 70, 229, 0.1)', fill: true, tension: 0.3 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } } });
-        }
-
-        function initLogbookFilters() {
-            const container = document.getElementById('subject-filters');
-            container.innerHTML = `<button class="subj-btn active px-4 py-1 rounded-full bg-indigo-600 text-white text-sm font-medium whitespace-nowrap" data-subj="All">All</button>`;
-            AppState.mistakes.subjects.forEach(s => {
-                container.innerHTML += `<button class="subj-btn px-4 py-1 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 text-sm font-medium whitespace-nowrap" data-subj="${s}">${s}</button>`;
-            });
-            document.querySelectorAll('.subj-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    document.querySelectorAll('.subj-btn').forEach(b => { b.classList.remove('bg-indigo-600', 'text-white'); b.classList.add('bg-slate-100', 'text-slate-600'); });
-                    e.target.classList.remove('bg-slate-100', 'text-slate-600'); e.target.classList.add('bg-indigo-600', 'text-white');
-                    AppState.mistakes.filters.subject = e.target.dataset.subj; renderLogbookCards();
-                });
-            });
-            ['filter-source', 'filter-diff', 'filter-fam'].forEach(id => { document.getElementById(id).addEventListener('change', (e) => { AppState.mistakes.filters[id.split('-')[1]] = e.target.value; renderLogbookCards(); }); });
-            document.getElementById('search-input-err').addEventListener('input', (e) => { AppState.mistakes.filters.search = e.target.value; renderLogbookCards(); });
-        }
-
-        function renderLogbookCards() {
-            const container = document.getElementById('review-cards-container'); container.innerHTML = '';
-            const filtered = AppState.mistakes.items.filter(item => {
-                let match = true; const f = AppState.mistakes.filters;
-                if(f.subject !== 'All' && item.Subject !== f.subject) match = false;
-                if(f.source && item.SourceType !== f.source) match = false;
-                if(f.difficulty && String(item.Difficulty) !== f.difficulty) match = false;
-                if(f.familiarity && String(item.Familiarity) !== f.familiarity) match = false;
-                if(f.search) {
-                    const target = `${item.Chapter} ${item.KeyPoint} ${item.QuestionText} ${item.SourceDetails}`.toLowerCase();
-                    if(!target.includes(f.search.toLowerCase())) match = false;
-                }
-                return match;
-            });
-
-            if(filtered.length === 0) return container.innerHTML = `<div class="text-center py-10 text-slate-500 font-medium">No records found.</div>`;
-
-            filtered.reverse().forEach(item => {
-                const diffCol = {1:'bg-green-100 text-green-800', 2:'bg-blue-100 text-blue-800', 3:'bg-yellow-100 text-yellow-800', 4:'bg-orange-100 text-orange-800', 5:'bg-red-100 text-red-800'}[item.Difficulty] || 'bg-slate-100';
-                const famCol = {1:'bg-red-100 text-red-800', 2:'bg-orange-100 text-orange-800', 3:'bg-yellow-100 text-yellow-800', 4:'bg-blue-100 text-blue-800', 5:'bg-green-100 text-green-800'}[item.Familiarity] || 'bg-slate-100';
-                const dt = new Date(item.Timestamp).toLocaleString("en-US", { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
-
-                container.innerHTML += `
-                    <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 hover:shadow-md transition relative">
-                        <div class="absolute top-4 right-4 flex space-x-2">
-                            <button onclick="editLogbookRecord('${item.ID}')" class="text-slate-400 hover:text-indigo-600 transition p-2 bg-slate-50 rounded"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="deleteLogbookRecord('${item.ID}')" class="text-slate-400 hover:text-red-600 transition p-2 bg-slate-50 rounded"><i class="fa-solid fa-trash"></i></button>
-                        </div>
-                        <div class="flex justify-between items-start mb-2 border-b border-slate-100 pb-3 pr-24">
-                            <div>
-                                <span class="inline-block px-2 py-1 bg-indigo-100 text-indigo-800 text-xs font-bold rounded mr-2">${item.Subject}</span>
-                                <span class="inline-block px-2 py-1 bg-slate-100 text-slate-700 text-xs font-bold rounded mr-2"><i class="fa-solid fa-book mr-1"></i>${item.SourceType}: ${item.SourceDetails}</span>
-                                <h3 class="text-lg font-bold mt-2 text-slate-800">${item.Chapter !== '-' ? item.Chapter : 'General'} <span class="text-sm font-normal text-slate-500">| ${item.KeyPoint}</span></h3>
-                            </div>
-                        </div>
-                        <div class="text-xs text-slate-400 mb-3"><i class="fa-regular fa-clock mr-1"></i> ${dt}</div>
-                        
-                        <div class="flex space-x-2 mb-4 text-xs font-bold">
-                            <div class="px-2 py-1 rounded ${diffCol}">Diff: Lvl ${item.Difficulty}</div>
-                            <div class="px-2 py-1 rounded ${famCol}">Fam: Lvl ${item.Familiarity}</div>
-                        </div>
-                        
-                        <div class="space-y-4 text-sm text-slate-700">
-                            <div class="bg-slate-50 p-4 rounded border border-slate-200">
-                                <strong class="block mb-2 text-slate-800">Question:</strong>
-                                <p class="whitespace-pre-wrap">${item.QuestionText}</p>
-                                ${item.QuestionImage ? `<img src="${item.QuestionImage}" class="mt-3 max-h-40 rounded border border-slate-300 shadow-sm">` : ''}
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="bg-red-50 p-4 rounded border border-red-100">
-                                    <strong class="block text-red-800 mb-2">My Wrong Answer:</strong>
-                                    <p class="whitespace-pre-wrap text-red-900">${item.WrongAnswer}</p>
-                                </div>
-                                <div class="bg-green-50 p-4 rounded border border-green-100">
-                                    <strong class="block text-green-800 mb-2">Correct Answer:</strong>
-                                    <p class="whitespace-pre-wrap text-green-900">${item.CorrectAnswer}</p>
-                                    ${item.AnswerImage ? `<img src="${item.AnswerImage}" class="mt-3 max-h-40 rounded border border-green-200 shadow-sm">` : ''}
-                                </div>
-                            </div>
-                            <div class="bg-yellow-50 p-4 rounded border border-yellow-200 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center">
-                                <div><strong class="text-yellow-800">Root Cause:</strong> <span class="text-yellow-900 font-medium">${item.RootCause}</span></div>
-                                ${item.Comments !== '-' ? `<div class="mt-2 sm:mt-0 text-slate-700 italic border-l-2 pl-3 border-yellow-300">"${item.Comments}"</div>` : ''}
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        window.deleteLogbookRecord = async (id) => {
-            if(!confirm("Are you sure you want to delete this error?")) return;
-            postData({ action: 'delete_error', id: id }, 'Record deleted');
+        window.dlSubBarcode = () => {
+            const svgData = new XMLSerializer().serializeToString(document.getElementById('logbook-barcode-svg'));
+            const c = document.createElement('canvas'); const ctx = c.getContext('2d'); const i = new Image();
+            i.onload = () => { c.width=i.width; c.height=i.height; ctx.fillStyle='white'; ctx.fillRect(0,0,c.width,c.height); ctx.drawImage(i,0,0); const a=document.createElement('a'); a.download=`SubBarcode_${Date.now()}.png`; a.href=c.toDataURL(); a.click(); }; i.src = 'data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(svgData)));
         };
 
+        function renderLogbookStats(){
+            const items = AppState.mistakes.items; document.getElementById('stat-total-errors').textContent = items.length;
+            const sC = {}; AppState.mistakes.subjects.forEach(s => sC[s]=0); const dC = {};
+            items.forEach(it => { if(sC[it.Subject]!==undefined) sC[it.Subject]++; const d = new Date(it.Timestamp).toLocaleDateString("en-US",{month:'short',day:'numeric'}); dC[d]=(dC[d]||0)+1; });
+            const M = AppState.mistakes; if(M.charts.subjects) M.charts.subjects.destroy(); if(M.charts.timeline) M.charts.timeline.destroy();
+            M.charts.subjects = new Chart(document.getElementById('chart-err-subjects').getContext('2d'), { type:'doughnut', data:{labels:Object.keys(sC), datasets:[{data:Object.values(sC),backgroundColor:['#ef4444','#f97316','#f59e0b','#84cc16','#10b981','#06b6d4','#3b82f6'],borderWidth:1}]}, options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right'}}} });
+            M.charts.timeline = new Chart(document.getElementById('chart-err-timeline').getContext('2d'), { type:'line', data:{labels:Object.keys(dC), datasets:[{label:'Added',data:Object.values(dC),borderColor:'#4f46e5',backgroundColor:'rgba(79,70,229,0.1)',fill:true}]}, options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}} });
+        }
+
+        // Review Errors Integration
+        document.getElementById('btn-logbook-review-scan').addEventListener('click', () => {
+            document.getElementById('logbook-review-scanner-container').classList.remove('hidden');
+            AppState.mistakes.reviewScanner = startScanner("logbook-review-reader", (code) => {
+                document.getElementById('logbook-review-scanner-container').classList.add('hidden');
+                document.getElementById('search-input-err').value = code; AppState.mistakes.filters.search = code; renderLogbookCards();
+            });
+        });
+        document.getElementById('btn-logbook-review-scan-stop').addEventListener('click', () => { if(AppState.mistakes.reviewScanner) AppState.mistakes.reviewScanner.stop(); document.getElementById('logbook-review-scanner-container').classList.add('hidden'); });
+
+        function initLogbookFilters() {
+            const c = document.getElementById('subject-filters'); c.innerHTML = `<button class="subj-btn bg-indigo-600 text-white px-4 py-1 rounded-full text-sm font-medium" onclick="filterLogbookSubj('All')">All</button>` + AppState.mistakes.subjects.map(s=>`<button class="subj-btn bg-slate-100 text-slate-600 hover:bg-slate-200 px-4 py-1 rounded-full text-sm font-medium" onclick="filterLogbookSubj('${s}')">${s}</button>`).join('');
+            document.getElementById('search-input-err').addEventListener('input', e => { AppState.mistakes.filters.search=e.target.value; renderLogbookCards(); });
+        }
+        window.filterLogbookSubj = (s) => { AppState.mistakes.filters.subject = s; document.querySelectorAll('.subj-btn').forEach(b=>{b.classList.remove('bg-indigo-600','text-white');b.classList.add('bg-slate-100','text-slate-600'); if(b.textContent===s) {b.classList.add('bg-indigo-600','text-white');b.classList.remove('bg-slate-100','text-slate-600');}}); renderLogbookCards(); };
+
+        function renderLogbookCards() {
+            const c = document.getElementById('review-cards-container'); c.innerHTML='';
+            const f = AppState.mistakes.items.filter(i => { let m=true; const fs = AppState.mistakes.filters; if(fs.subject!=='All'&&i.Subject!==fs.subject) m=false;
+                if(fs.search) { const t=`${i.Chapter} ${i.KeyPoint} ${i.QuestionText} ${i.SourceDetails} ${i.ParentBarcode} ${i.SubBarcode}`.toLowerCase(); if(!t.includes(fs.search.toLowerCase())) m=false; }
+                return m; });
+            if(f.length===0) return c.innerHTML=`<div class="text-center py-10 text-slate-500 font-medium">No records found.</div>`;
+            f.reverse().forEach(i => {
+                const diffC = {1:'bg-green-100 text-green-800',5:'bg-red-100 text-red-800'}[i.Difficulty]||'bg-slate-100 text-slate-800';
+                c.innerHTML += `<div class="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition relative">
+                    <div class="absolute top-4 right-4 flex gap-2">
+                        <!-- Fix 4: Restored Edit Function on UI -->
+                        <button onclick="editLogbookRecord('${i.ID}')" class="text-slate-400 hover:text-indigo-600 p-2"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteLogbookRecord('${i.ID}')" class="text-slate-400 hover:text-red-600 p-2"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                    <div class="mb-2 border-b pb-3 pr-24">
+                        <span class="inline-block px-2 py-1 bg-indigo-100 text-indigo-800 text-xs font-bold rounded mr-2">${i.Subject} ${i.SecondaryLevel?`(Sec ${i.SecondaryLevel})`:''}</span>
+                        <span class="inline-block px-2 py-1 bg-slate-100 text-slate-700 text-xs font-bold rounded"><i class="fa-solid fa-book mr-1"></i>${i.SourceType}: ${i.SourceDetails}</span>
+                        <h3 class="text-lg font-bold mt-2 text-slate-800">${i.Chapter!=='-'?i.Chapter:'General'} <span class="text-sm font-normal text-slate-500">| ${i.KeyPoint}</span></h3>
+                        ${i.SubBarcode ? `<div class="mt-2 text-xs font-mono bg-blue-100 text-blue-800 px-2 py-1 rounded inline-block border border-blue-200"><i class="fa-solid fa-barcode mr-1"></i> ${i.SubBarcode} ${i.QuestionNumber?'(Q'+i.QuestionNumber+')':''}</div>` : ''}
+                    </div>
+                    <div class="flex space-x-2 mb-4 text-xs font-bold"><div class="px-2 py-1 rounded ${diffC}">Diff: ${i.Difficulty}</div></div>
+                    <div class="space-y-4 text-sm text-slate-700">
+                        <div class="bg-slate-50 p-4 rounded border"><strong class="block mb-2 text-slate-800">Question:</strong><p class="whitespace-pre-wrap">${i.QuestionText}</p>${i.QuestionImage?`<img src="${i.QuestionImage}" class="mt-3 max-h-40 rounded border shadow">`:''}</div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="bg-red-50 p-4 rounded border border-red-100"><strong class="block text-red-800 mb-2">My Wrong Answer:</strong><p class="whitespace-pre-wrap text-red-900">${i.WrongAnswer}</p></div><div class="bg-green-50 p-4 rounded border border-green-100"><strong class="block text-green-800 mb-2">Correct Answer:</strong><p class="whitespace-pre-wrap text-green-900">${i.CorrectAnswer}</p>${i.AnswerImage?`<img src="${i.AnswerImage}" class="mt-3 max-h-40 rounded border shadow">`:''}</div></div>
+                    </div>
+                </div>`;
+            });
+        }
+
+        // Restored Edit Repopulation Logic
         window.editLogbookRecord = (id) => {
             const item = AppState.mistakes.items.find(i => i.ID === id); if(!item) return;
             resetLogbookForm(); const M = AppState.mistakes;
@@ -988,19 +711,20 @@
             document.getElementById('form-title').innerHTML = '<i class="fa-solid fa-pen text-indigo-600 mr-2"></i> 修改錯題 (Edit Error)';
             document.getElementById('submit-btn-text').textContent = 'Update & Sync'; document.getElementById('btn-cancel-edit').classList.remove('hidden');
 
-            document.getElementById('field-subject').value = item.Subject; document.getElementById('field-chapter').value = item.Chapter !== '-' ? item.Chapter : ''; document.getElementById('field-keypoint').value = item.KeyPoint !== '-' ? item.KeyPoint : '';
+            document.getElementById('field-subject').value = item.Subject;
+            if (item.SecondaryLevel) document.getElementById('field-secondary').value = item.SecondaryLevel;
+            document.getElementById('field-chapter').value = item.Chapter !== '-' ? item.Chapter : '';
+            document.getElementById('field-keypoint').value = item.KeyPoint !== '-' ? item.KeyPoint : '';
+            document.getElementById('field-parent-bc').value = item.ParentBarcode || '';
+            document.getElementById('field-parent-qnum').value = item.QuestionNumber || '';
+            
             document.querySelectorAll('input[name="source_type"]').forEach(r => { r.checked = (r.value === item.SourceType); if(r.checked) r.dispatchEvent(new Event('change')); });
             
             if (item.SourceType === 'Past Paper') { 
-                // Enhanced parsing for the new detailed format
-                let sd = item.SourceDetails || '';
-                let parts = sd.split(' ');
-                document.getElementById('field-pp-type').value = parts[0] || 'HKDSE';
-                document.getElementById('field-pp-year').value = parts[1] || '';
-                let paperMatch = sd.match(/Paper\s?[\w]+/i);
-                if(paperMatch) document.getElementById('field-pp-paper').value = paperMatch[0];
-                let qMatch = sd.match(/Q([\w\d]+)$/i);
-                if(qMatch) document.getElementById('field-pp-qnum').value = qMatch[1];
+                let sd = item.SourceDetails || ''; let parts = sd.split(' ');
+                document.getElementById('field-pp-type').value = parts[0] || 'HKDSE'; document.getElementById('field-pp-year').value = parts[1] || '';
+                let pm = sd.match(/Paper\s?[\w]+/i); if(pm) document.getElementById('field-pp-paper').value = pm[0];
+                document.getElementById('field-pp-qnum').value = item.QuestionNumber || '';
             } 
             else if (item.SourceType === 'Exercise') document.getElementById('field-exe-name').value = item.SourceDetails; 
             else if (item.SourceType === 'Quiz or Exam') document.getElementById('field-quiz-name').value = item.SourceDetails;
@@ -1017,8 +741,10 @@
             switchTab('view-add-error', document.querySelector('[data-target="view-add-error"]'));
             window.scrollTo(0,0);
         };
+        
+        window.deleteLogbookRecord = async (id) => { if(confirm("Delete this error?")) postData({action:'delete_error',id}); };
 
-        // --- Export Logbook DOCX logic ---
+        // Fix 5: Full DOCX Generation with text constructor fixes
         function getBase64Buffer(base64Str) { const raw = window.atob(base64Str.split(',')[1]); const arr = new Uint8Array(new ArrayBuffer(raw.length)); for(let i=0;i<raw.length;i++) arr[i] = raw.charCodeAt(i); return arr; }
         function getImageDimensions(b64) { return new Promise((res) => { const img = new Image(); img.onload = () => res({ w: img.width, h: img.height }); img.src = b64; }); }
         
@@ -1030,6 +756,9 @@
                 AppState.mistakes.items.forEach(it => { if(!grouped[it.Subject][it.SourceType]) grouped[it.Subject][it.SourceType] = []; grouped[it.Subject][it.SourceType].push(it); });
 
                 const docChildren = []; const T = docx.TextRun; const P = docx.Paragraph; const H = docx.HeadingLevel;
+                // Helper to preserve multiline strings
+                const makeMulti = (txt, spc) => new P({ children: String(txt||'').split('\n').map((l,i)=>new T({text:l, break:i>0?1:0})), spacing: spc });
+
                 docChildren.push(new P({ text: "錯題簿", alignment: docx.AlignmentType.CENTER, spacing: { before: 4000, after: 400 }, run: { size: 72, bold: true, color: "000000" } }));
                 docChildren.push(new P({ text: `Generated: ${new Date().toLocaleString()}`, alignment: docx.AlignmentType.CENTER }));
                 docChildren.push(new P({ children: [new docx.PageBreak()] }));
@@ -1052,19 +781,19 @@
                                 
                                 const b = {style: docx.BorderStyle.SINGLE, size:1, color:"000000"};
                                 docChildren.push(new docx.Table({ width: {size:100, type:docx.WidthType.PERCENTAGE}, borders:{top:b, bottom:b, left:b, right:b, insideHorizontal:b, insideVertical:b}, rows: [
-                                    new docx.TableRow({children: [new docx.TableCell({children:[new P({children:[new T({text:"Chapter:", bold:true})]})]}), new docx.TableCell({children:[new P(item.Chapter)]})]}),
-                                    new docx.TableRow({children: [new docx.TableCell({children:[new P({children:[new T({text:"Key Point:", bold:true})]})]}), new docx.TableCell({children:[new P(item.KeyPoint)]})]}),
-                                    new docx.TableRow({children: [new docx.TableCell({children:[new P({children:[new T({text:"Difficulty:", bold:true})]})]}), new docx.TableCell({children:[new P('●'.repeat(item.Difficulty||0))]})]}),
-                                    new docx.TableRow({children: [new docx.TableCell({children:[new P({children:[new T({text:"Root Cause:", bold:true})]})]}), new docx.TableCell({children:[new P(item.RootCause)]})]})
+                                    new docx.TableRow({children: [new docx.TableCell({children:[new P({children:[new T({text:"Chapter:", bold:true})]})]}), new docx.TableCell({children:[new P({text: item.Chapter || ''})]})]}),
+                                    new docx.TableRow({children: [new docx.TableCell({children:[new P({children:[new T({text:"Key Point:", bold:true})]})]}), new docx.TableCell({children:[new P({text: item.KeyPoint + (item.QuestionNumber ? ` (Q${item.QuestionNumber})` : '')})]})]}),
+                                    new docx.TableRow({children: [new docx.TableCell({children:[new P({children:[new T({text:"Difficulty:", bold:true})]})]}), new docx.TableCell({children:[new P({text: '●'.repeat(item.Difficulty||0)})]})]}),
+                                    new docx.TableRow({children: [new docx.TableCell({children:[new P({children:[new T({text:"Root Cause:", bold:true})]})]}), new docx.TableCell({children:[new P({text: item.RootCause || ''})]})]})
                                 ]}));
                                 docChildren.push(new P({ text: "", spacing: { after: 200 } }));
                                 docChildren.push(new P({ children: [new T({ text: "Question:", bold: true })] }));
-                                docChildren.push(new P({ text: item.QuestionText, spacing: { after: 200 } }));
+                                docChildren.push(makeMulti(item.QuestionText, { after: 200 }));
                                 if (item.QuestionImage) { const dims = await getImageDimensions(item.QuestionImage); const r = Math.min(500/dims.w, 350/dims.h); docChildren.push(new P({ children: [new docx.ImageRun({ data: getBase64Buffer(item.QuestionImage), transformation: { width: dims.w*r, height: dims.h*r } })], spacing: { after: 400 } })); }
                                 docChildren.push(new P({ children: [new T({ text: "My Wrong Answer:", bold: true, color: "991B1B" })] }));
-                                docChildren.push(new P({ text: item.WrongAnswer, spacing: { after: 300 } }));
+                                docChildren.push(makeMulti(item.WrongAnswer, { after: 300 }));
                                 docChildren.push(new P({ children: [new T({ text: "Correct Answer:", bold: true, color: "166534" })] }));
-                                docChildren.push(new P({ text: item.CorrectAnswer, spacing: { after: 100 } }));
+                                docChildren.push(makeMulti(item.CorrectAnswer, { after: 100 }));
                                 if (item.AnswerImage) { const dims = await getImageDimensions(item.AnswerImage); const r = Math.min(500/dims.w, 350/dims.h); docChildren.push(new P({ children: [new docx.ImageRun({ data: getBase64Buffer(item.AnswerImage), transformation: { width: dims.w*r, height: dims.h*r } })], spacing: { after: 300 } })); }
                             }
                         }
@@ -1078,258 +807,148 @@
         });
 
 
-        // ==========================================
-        // APP 2: EDUSCAN PRO LOGIC
-        // ==========================================
-        
-        // Generate Subtype logic
-        const esSubCats = { Exercise: ["DSE Past Paper", "Mock", "Exercise"], Assessment: ["Pop Quiz", "Exam", "Uniform Assessment"], Homework: ["School", "Tutorial"] };
-        document.getElementById('es-category').addEventListener('change', function() {
-            const val = this.value; const ctn = document.getElementById('es-subcat-container'); const sel = document.getElementById('es-subtype');
-            if(val && esSubCats[val]) { sel.innerHTML = esSubCats[val].map(s => `<option value="${s}">${s}</option>`).join(''); ctn.classList.remove('hidden'); } 
-            else { ctn.classList.add('hidden'); sel.innerHTML=''; }
-        });
+        // ====== APP 2: EDUSCAN PRO ======
+        document.querySelectorAll('input[name="es_source_type"]').forEach(r => r.addEventListener('change', (e) => {
+            document.getElementById('es-source-details-container').classList.remove('hidden'); document.getElementById('es_source_past_paper_div').classList.add('hidden'); document.getElementById('es_source_exercise_div').classList.add('hidden'); document.getElementById('es_source_quiz_div').classList.add('hidden');
+            if(e.target.value==='Past Paper') document.getElementById('es_source_past_paper_div').classList.remove('hidden'); if(e.target.value==='Exercise') document.getElementById('es_source_exercise_div').classList.remove('hidden'); if(e.target.value==='Quiz or Exam') document.getElementById('es_source_quiz_div').classList.remove('hidden');
+        }));
 
-        // Generate Barcode form
         document.getElementById('eduscan-generate-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const subject = document.getElementById('es-subject').value;
-            const level = document.getElementById('es-level').value;
-            const type = document.getElementById('es-category').value === 'Exercise' || document.getElementById('es-category').value === 'Assessment' || document.getElementById('es-category').value === 'Homework' ? document.getElementById('es-subtype').value : document.getElementById('es-category').value;
-            const name = document.getElementById('es-assess-name').value;
+            e.preventDefault(); const s = document.getElementById('es-subject').value; const l = document.getElementById('es-level').value; const sT = document.querySelector('input[name="es_source_type"]:checked')?.value||''; let sD = '';
+            if(sT==='Past Paper') sD = `${document.getElementById('es-pp-type').value} ${document.getElementById('es-pp-year').value} ${document.getElementById('es-pp-paper').value||''}`.trim().replace(/\s+/g,' '); else if(sT==='Exercise') sD = document.getElementById('es-exe-name').value; else if(sT==='Quiz or Exam') sD = document.getElementById('es-quiz-name').value;
             let pid = document.getElementById('es-paper-id').value.trim().replace(/[^a-zA-Z0-9]/g, '');
-
-            if (!pid) {
-                const p = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-                pid = p.charAt(Math.random()*26)+p.charAt(Math.random()*26)+p.charAt(Math.random()*26) + Date.now().toString().slice(-6);
-            }
-            if(AppState.eduscan.students.find(s => s.id === pid)) pid += Math.floor(Math.random()*100);
-
-            const payload = {
-                action: 'add_student',
-                data: { id: pid, subject, secondary: level, assessmentType: type, assessmentName: name, createdAt: new Date().toISOString() }
-            };
-
-            if(await postData(payload, 'Barcode Generated & Synced')) {
-                JsBarcode("#es-barcode-svg", pid, { format: "CODE128", width: 2, height: 80, displayValue: true, fontSize: 16 });
-                document.getElementById('es-barcode-info').innerHTML = `<strong>${subject}</strong> (Sec ${level})<br>${type}: ${name}<br>ID: ${pid}`;
-                document.getElementById('es-barcode-result').classList.remove('hidden');
+            if(!pid) { const p='ABCDEFGHIJKLMNOPQRSTUVWXYZ'; pid=p.charAt(Math.random()*26)+p.charAt(Math.random()*26)+Date.now().toString().slice(-6); }
+            if(await postData({action:'add_student', data:{id:pid, subject:s, secondary:l, sourceType:sT, sourceDetails:sD, createdAt:new Date().toISOString()}}, 'Barcode Generated!')) {
+                JsBarcode("#es-barcode-svg", pid, { format: "CODE128", width: 2, height: 80, displayValue: true });
+                document.getElementById('es-barcode-info').innerHTML = `<strong>${s}</strong> ${l?`(Sec ${l})`:''}<br>${sT}: ${sD}<br>ID: ${pid}`; document.getElementById('es-barcode-result').classList.remove('hidden');
             }
         });
-
         document.getElementById('btn-dl-png').addEventListener('click', () => {
-            const svg = document.getElementById('es-barcode-svg');
-            const svgData = new XMLSerializer().serializeToString(svg);
-            const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d'); const img = new Image();
-            img.onload = () => { canvas.width = img.width; canvas.height = img.height; ctx.fillStyle = 'white'; ctx.fillRect(0,0,canvas.width,canvas.height); ctx.drawImage(img,0,0);
-                const a = document.createElement('a'); a.download = `Barcode_${Date.now()}.png`; a.href = canvas.toDataURL(); a.click(); };
-            img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+            const svgD = new XMLSerializer().serializeToString(document.getElementById('es-barcode-svg'));
+            const c = document.createElement('canvas'); const ctx = c.getContext('2d'); const i = new Image();
+            i.onload = () => { c.width=i.width; c.height=i.height; ctx.fillStyle='white'; ctx.fillRect(0,0,c.width,c.height); ctx.drawImage(i,0,0); const a=document.createElement('a'); a.download=`Barcode.png`; a.href=c.toDataURL(); a.click(); }; i.src='data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(svgD)));
         });
         document.getElementById('btn-print-bc').addEventListener('click', () => window.print());
 
-        // Scanner Logic
-        function startScanner(elementId, onSuccess) {
-            const scanner = new Html5Qrcode(elementId);
-            scanner.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 100 } }, (text) => {
-                scanner.stop(); onSuccess(text);
-            }, ()=>{}).catch(e => showToast('Camera access denied', 'error'));
-            return scanner;
-        }
-
-        // Scanning for Grade
-        document.getElementById('btn-start-scan').addEventListener('click', () => {
-            document.getElementById('es-scanner-container').classList.remove('hidden');
-            document.getElementById('btn-start-scan').classList.add('hidden');
-            document.getElementById('btn-stop-scan').classList.remove('hidden');
-            AppState.eduscan.html5QrCode = startScanner("es-reader", handleScannedBarcode);
+        // Grade Scanning
+        document.getElementById('btn-start-scan').addEventListener('click', () => { 
+            document.getElementById('es-scanner-container').classList.remove('hidden'); 
+            document.getElementById('btn-start-scan').classList.add('hidden'); 
+            document.getElementById('btn-stop-scan').classList.remove('hidden'); 
+            AppState.eduscan.html5QrCode = startScanner("es-reader", (code) => {
+                document.getElementById('es-scanner-container').classList.add('hidden'); 
+                document.getElementById('btn-start-scan').classList.remove('hidden');
+                document.getElementById('btn-stop-scan').classList.add('hidden');
+                handleScanned(code);
+            }); 
         });
-        document.getElementById('btn-stop-scan').addEventListener('click', () => {
-            if(AppState.eduscan.html5QrCode) AppState.eduscan.html5QrCode.stop();
-            document.getElementById('es-scanner-container').classList.add('hidden');
-            document.getElementById('btn-start-scan').classList.remove('hidden');
-            document.getElementById('btn-stop-scan').classList.add('hidden');
-        });
-        document.getElementById('btn-manual-scan').addEventListener('click', () => {
-            const val = document.getElementById('es-manual-barcode').value.trim();
-            if(val) handleScannedBarcode(val);
-        });
-
-        function handleScannedBarcode(code) {
+        document.getElementById('btn-stop-scan').addEventListener('click', () => { if(AppState.eduscan.html5QrCode) AppState.eduscan.html5QrCode.stop(); document.getElementById('es-scanner-container').classList.add('hidden'); document.getElementById('btn-start-scan').classList.remove('hidden'); document.getElementById('btn-stop-scan').classList.add('hidden'); });
+        document.getElementById('btn-manual-scan').addEventListener('click', () => handleScanned(document.getElementById('es-manual-barcode').value.trim()));
+        
+        function handleScanned(code) {
             const s = AppState.eduscan.students.find(x => x.id === code);
-            if(s) {
-                AppState.eduscan.currentScannedData = s; AppState.eduscan.currentWrongQs = [];
-                document.getElementById('es-scanned-info').innerHTML = `<strong>Scan Match!</strong><br>${s.subject} (Sec ${s.secondary}) - ${s.assessmentName}<br>ID: ${s.id}`;
-                document.getElementById('es-grade-section').classList.remove('hidden');
-                document.getElementById('es-grade-form').reset(); document.getElementById('es-wq-list').innerHTML='';
-                showToast('Barcode Found!', 'success');
-            } else showToast('Student Barcode not found in DB', 'error');
+            if(s) { 
+                AppState.eduscan.currentScannedData = s; 
+                document.getElementById('es-grade-form').reset(); 
+
+                // Pre-fill previously logged individual marks if they exist
+                const pastGrades = AppState.eduscan.grades.filter(g => g.studentId === code).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
+                if (pastGrades.length > 0) {
+                    const latest = pastGrades[0];
+                    try {
+                        AppState.eduscan.currentIndividualMarks = typeof latest.individualMarks === 'string' ? JSON.parse(latest.individualMarks) : latest.individualMarks;
+                    } catch(e) { AppState.eduscan.currentIndividualMarks = []; }
+                    document.getElementById('es-score').value = latest.score || '';
+                    document.getElementById('es-max-score').value = latest.maxScore || 100;
+                    document.getElementById('es-attempt').value = pastGrades.length + 1;
+                } else {
+                    AppState.eduscan.currentIndividualMarks = [];
+                    document.getElementById('es-max-score').value = 100;
+                    document.getElementById('es-attempt').value = 1;
+                }
+
+                renderEsIQ(); 
+                document.getElementById('es-scanned-info').innerHTML = `<strong>Scan Match!</strong><br>${s.subject} ${s.secondary?`(Sec ${s.secondary})`:''} - ${s.sourceType}: ${s.sourceDetails}<br>ID: ${s.id}`; 
+                document.getElementById('es-grade-section').classList.remove('hidden'); 
+                showToast('Found & Loaded!', 'success'); 
+            } else showToast('Not found', 'error');
         }
 
-        // Add WQ in EduScan Grade Form
-        document.getElementById('btn-es-add-wq').addEventListener('click', () => {
-            const n = document.getElementById('es-wq-num').value.trim(); if(!n) return showToast('Q Number required', 'error');
-            AppState.eduscan.currentWrongQs.push({
-                number: n, remark: document.getElementById('es-wq-remark').value, questionText: document.getElementById('es-wq-text').value,
-                userAnswer: document.getElementById('es-wq-user').value, correctAnswer: document.getElementById('es-wq-correct').value
-            });
-            renderEsWqList();
-            ['es-wq-num','es-wq-remark','es-wq-text','es-wq-user','es-wq-correct'].forEach(id => document.getElementById(id).value = '');
+        document.getElementById('btn-es-add-iq').addEventListener('click', () => {
+            const n = document.getElementById('es-iq-num').value.trim(); const sc = document.getElementById('es-iq-score').value; const mx = document.getElementById('es-iq-max').value; if(!n || !sc || !mx) return showToast('Fill all fields','error');
+            AppState.eduscan.currentIndividualMarks.push({ qNum: n, score: parseFloat(sc), max: parseFloat(mx), subBarcode: AppState.eduscan.currentScannedData.id + n.replace(/\s+/g,'') }); renderEsIQ();
+            ['es-iq-num','es-iq-score','es-iq-max'].forEach(id=>document.getElementById(id).value='');
         });
-
-        function renderEsWqList() {
-            const lst = document.getElementById('es-wq-list'); lst.innerHTML = '';
-            AppState.eduscan.currentWrongQs.forEach((q, i) => {
-                lst.innerHTML += `<div class="bg-white p-2 rounded border flex justify-between items-center text-sm">
-                    <span><strong>Q${q.number}</strong> ${q.remark ? '- '+q.remark : ''}</span>
-                    <button type="button" class="text-red-500 hover:text-red-700" onclick="AppState.eduscan.currentWrongQs.splice(${i},1); renderEsWqList()"><i class="fa-solid fa-xmark"></i></button>
-                </div>`;
-            });
+        function renderEsIQ() {
+            const l = document.getElementById('es-iq-list'); l.innerHTML = '';
+            AppState.eduscan.currentIndividualMarks.forEach((m, i) => { l.innerHTML += `<div class="bg-white p-2 border border-blue-200 rounded flex justify-between items-center text-sm"><span class="font-bold text-blue-800">Q${m.qNum}: ${m.score}/${m.max} <span class="text-xs text-slate-500 font-normal ml-2">(${m.subBarcode})</span></span><button type="button" class="text-red-500 hover:text-red-700" onclick="AppState.eduscan.currentIndividualMarks.splice(${i},1); renderEsIQ()"><i class="fa-solid fa-xmark"></i></button></div>`; });
         }
 
         document.getElementById('es-grade-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const s = AppState.eduscan.currentScannedData; if(!s) return;
-            const payload = {
-                action: 'add_grade',
-                data: {
-                    studentId: s.id, subject: s.subject, secondary: s.secondary, assessmentType: s.assessmentType, assessmentName: s.assessmentName,
-                    score: parseFloat(document.getElementById('es-score').value), maxScore: parseFloat(document.getElementById('es-max-score').value),
-                    attemptNumber: parseInt(document.getElementById('es-attempt').value), comments: document.getElementById('es-comments').value,
-                    wrongQuestions: AppState.eduscan.currentWrongQs, timestamp: new Date().toISOString()
-                }
-            };
-            if(await postData(payload, 'Grade Saved & Synced')) {
-                document.getElementById('es-grade-section').classList.add('hidden');
-                document.getElementById('es-manual-barcode').value = '';
-            }
+            e.preventDefault(); const s = AppState.eduscan.currentScannedData; if(!s) return;
+            const payload = { action:'add_grade', data: { studentId:s.id, subject:s.subject, secondary:s.secondary, sourceType:s.sourceType, sourceDetails:s.sourceDetails, score:parseFloat(document.getElementById('es-score').value), maxScore:parseFloat(document.getElementById('es-max-score').value), attemptNumber:parseInt(document.getElementById('es-attempt').value), individualMarks: AppState.eduscan.currentIndividualMarks, timestamp:new Date().toISOString() } };
+            if(await postData(payload, 'Grade Logged!')) { document.getElementById('es-grade-section').classList.add('hidden'); document.getElementById('es-manual-barcode').value = ''; }
         });
 
-        // EduScan Records
+        // Paper DB
         function renderEsRecords() {
-            const list = document.getElementById('es-student-list'); list.innerHTML = '';
-            const f = AppState.eduscan.filters;
-            
-            // Filters UI
-            const subs = ["All", "Chinese", "English", "Mathematics", "Physics", "Chemistry", "Biology", "M2", "CS"];
-            document.getElementById('es-record-filters').innerHTML = subs.map(s => `<button class="es-filter-btn px-4 py-1 rounded-full text-sm font-medium whitespace-nowrap ${s===f.subject ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}" onclick="AppState.eduscan.filters.subject='${s}'; renderEsRecords()">${s}</button>`).join('');
-
-            const filtered = AppState.eduscan.students.filter(s => (f.subject==='All' || s.subject===f.subject) && (!f.search || `${s.id} ${s.assessmentName}`.toLowerCase().includes(f.search.toLowerCase())));
-            
+            const list = document.getElementById('es-student-list'); list.innerHTML = ''; const f = AppState.eduscan.filters;
+            document.getElementById('es-record-filters').innerHTML = ["All","Chinese","English","Mathematics","Physics","Chemistry","Biology","M2","CS"].map(s => `<button class="px-4 py-1 rounded-full text-sm font-medium ${s===f.subject?'bg-indigo-600 text-white':'bg-slate-100 text-slate-600'}" onclick="AppState.eduscan.filters.subject='${s}'; renderEsRecords()">${s}</button>`).join('');
+            const filtered = AppState.eduscan.students.filter(s => (f.subject==='All'||s.subject===f.subject)&&(!f.search||`${s.id} ${s.sourceDetails}`.toLowerCase().includes(f.search.toLowerCase())));
             if(filtered.length === 0) return list.innerHTML = '<div class="text-center py-10 text-slate-500 font-medium">No records found.</div>';
-
             filtered.reverse().forEach(st => {
-                const gs = AppState.eduscan.grades.filter(g => g.studentId === st.id);
-                const avg = gs.length > 0 ? (gs.reduce((sum,g)=>sum+(g.score/g.maxScore*100),0)/gs.length).toFixed(1) : 'N/A';
-                
-                list.innerHTML += `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 hover:border-indigo-300 transition flex justify-between items-center">
-                    <div>
-                        <div class="font-bold text-slate-800">${st.subject} <span class="font-normal text-slate-500 text-sm ml-2">Sec ${st.secondary}</span></div>
-                        <div class="text-sm text-slate-600 mt-1">ID: ${st.id} | ${st.assessmentType}: ${st.assessmentName}</div>
-                        <div class="text-xs font-medium text-indigo-600 mt-1">Attempts: ${gs.length} | Avg: ${avg}${avg!=='N/A'?'%':''}</div>
-                    </div>
-                    <div class="flex gap-2">
-                        <button class="bg-white border border-slate-300 text-slate-700 px-3 py-1.5 rounded hover:bg-slate-100 text-sm font-medium" onclick="esViewDetail('${st.id}')">View</button>
-                        <button class="bg-red-50 text-red-600 border border-red-200 px-3 py-1.5 rounded hover:bg-red-100 text-sm" onclick="esDeleteStudent('${st.id}')"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                </div>`;
+                const gs = AppState.eduscan.grades.filter(g => g.studentId === st.id); const avg = gs.length > 0 ? (gs.reduce((sum,g)=>sum+(g.score/g.maxScore*100),0)/gs.length).toFixed(1) : 'N/A';
+                list.innerHTML += `<div class="bg-slate-50 p-4 rounded-lg border flex justify-between items-center"><div><div class="font-bold text-slate-800">${st.subject} ${st.secondary?`<span class="font-normal text-slate-500 text-sm">Sec ${st.secondary}</span>`:''}</div><div class="text-sm text-slate-600 mt-1">ID: ${st.id} | ${st.sourceType}: ${st.sourceDetails}</div><div class="text-xs font-medium text-indigo-600 mt-1">Attempts: ${gs.length} | Avg: ${avg}${avg!=='N/A'?'%':''}</div></div><div class="flex gap-2"><button class="bg-white border text-slate-700 px-3 py-1.5 rounded text-sm font-medium" onclick="esViewDetail('${st.id}')">View</button><button class="bg-red-50 text-red-600 border border-red-200 px-3 py-1.5 rounded text-sm" onclick="esDeleteStudent('${st.id}')"><i class="fa-solid fa-trash"></i></button></div></div>`;
             });
         }
-        document.getElementById('es-search-record').addEventListener('input', (e) => { AppState.eduscan.filters.search = e.target.value; renderEsRecords(); });
-        
-        window.esDeleteStudent = async (id) => { if(confirm("Delete this student paper and all its grades?")) postData({action:'delete_student', id:id}); };
-        window.esDeleteGrade = async (sid, ts) => { if(confirm("Delete this grade?")) postData({action:'delete_grade', studentId:sid, timestamp:ts}); };
+        document.getElementById('es-search-record').addEventListener('input', e => { AppState.eduscan.filters.search=e.target.value; renderEsRecords(); });
+        window.esDeleteStudent = async id => { if(confirm("Delete paper & grades?")) postData({action:'delete_student',id}); };
+        window.esDeleteGrade = async (sid, ts) => { if(confirm("Delete grade?")) postData({action:'delete_grade', studentId:sid, timestamp:ts}); };
 
         window.esViewDetail = (id) => {
-            const st = AppState.eduscan.students.find(s=>s.id===id);
-            const gs = AppState.eduscan.grades.filter(g=>g.studentId===id).sort((a,b)=>new Date(a.timestamp)-new Date(b.timestamp));
-            
-            let gHtml = '<div class="text-slate-500">No grades logged.</div>';
-            let chartHtml = '';
-            
+            const st = AppState.eduscan.students.find(s=>s.id===id); const gs = AppState.eduscan.grades.filter(g=>g.studentId===id).sort((a,b)=>new Date(a.timestamp)-new Date(b.timestamp));
+            let gHtml = '<div class="text-slate-500">No grades logged.</div>'; let chartHtml = '';
             if(gs.length > 0) {
-                gHtml = `<div class="overflow-x-auto"><table class="w-full text-sm text-left"><thead class="bg-slate-100 text-slate-700"><tr><th class="p-3">Score</th><th class="p-3">Att.</th><th class="p-3">Date</th><th class="p-3">Comments</th><th class="p-3">Actions</th></tr></thead><tbody>`;
+                gHtml = `<div class="overflow-x-auto"><table class="w-full text-sm text-left"><thead class="bg-slate-100 text-slate-700"><tr><th class="p-3">Total</th><th class="p-3">Individual Marks</th><th class="p-3">Actions</th></tr></thead><tbody>`;
                 gs.forEach(g => {
-                    gHtml += `<tr class="border-b"><td class="p-3 font-bold">${g.score}/${g.maxScore} <span class="text-xs text-indigo-600">(${(g.score/g.maxScore*100).toFixed(1)}%)</span></td><td class="p-3">${g.attemptNumber}</td><td class="p-3">${new Date(g.timestamp).toLocaleDateString()}</td><td class="p-3">${g.comments}</td><td class="p-3"><button class="text-red-500 hover:text-red-700" onclick="esDeleteGrade('${st.id}', '${g.timestamp}')"><i class="fa-solid fa-trash"></i></button></td></tr>`;
-                });
-                gHtml += `</tbody></table></div>`;
-                chartHtml = `<div class="h-48 mt-6"><canvas id="es-perf-chart"></canvas></div>`;
+                    let imH = ''; try { let p = typeof g.individualMarks==='string'?JSON.parse(g.individualMarks):g.individualMarks; if(p&&p.length) p.forEach(x=>imH+=`<div class="text-xs bg-slate-50 border p-1 rounded inline-block mr-1 mb-1"><strong>Q${x.qNum}:</strong> ${x.score}/${x.max} <span class="text-slate-400 font-mono">(${x.subBarcode})</span></div>`); }catch(e){}
+                    gHtml += `<tr class="border-b"><td class="p-3 font-bold text-indigo-700">${g.score}/${g.maxScore} <div class="text-xs text-slate-500">Att: ${g.attemptNumber} | ${new Date(g.timestamp).toLocaleDateString()}</div></td><td class="p-3">${imH||'-'}</td><td class="p-3"><button class="text-red-500" onclick="esDeleteGrade('${st.id}', '${g.timestamp}')"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                }); gHtml += `</tbody></table></div>`; chartHtml = `<div class="h-48 mt-6"><canvas id="es-perf-chart"></canvas></div>`;
+            }
+            // Unified view of Errors
+            const linkedErrors = AppState.mistakes.items.filter(e => e.ParentBarcode === id);
+            let errHtml = ''; if(linkedErrors.length>0) {
+                errHtml = `<h3 class="font-bold text-slate-800 mt-8 mb-3 border-b pb-2"><i class="fa-solid fa-triangle-exclamation text-red-600 mr-2"></i> Logged Mistakes (Linked via Logbook)</h3><div class="space-y-4">`;
+                linkedErrors.forEach(err => {
+                    errHtml += `<div class="bg-red-50 p-4 border border-red-200 rounded-lg"><div class="font-bold text-red-800">${err.QuestionNumber?'Q'+err.QuestionNumber+' - ':''}${err.KeyPoint}</div><div class="text-sm text-slate-700 mt-2"><strong>Wrong Ans:</strong> ${err.WrongAnswer}</div><div class="text-sm text-green-700 mt-1"><strong>Correct Ans:</strong> ${err.CorrectAnswer}</div><div class="text-xs font-mono text-slate-500 mt-2">Sub-Barcode: ${err.SubBarcode || 'N/A'}</div></div>`;
+                }); errHtml += `</div>`;
             }
 
-            document.getElementById('es-detail-content').innerHTML = `
-                <div class="bg-indigo-50 border-l-4 border-indigo-500 p-4 rounded text-indigo-900">
-                    <strong class="text-lg">${st.subject} - ${st.assessmentName}</strong><br>
-                    ID: ${st.id} | Level: Sec ${st.secondary} | Type: ${st.assessmentType}
-                </div>
-                <div>
-                    <h3 class="font-bold text-slate-800 mb-3 border-b pb-2">Grade History</h3>
-                    ${gHtml}
-                    ${chartHtml}
-                </div>
-            `;
-            document.getElementById('es-records-list-view').classList.add('hidden');
-            document.getElementById('es-record-detail-view').classList.remove('hidden');
-
+            document.getElementById('es-detail-content').innerHTML = `<div class="bg-indigo-50 border-l-4 border-indigo-500 p-4 rounded text-indigo-900"><strong class="text-lg">${st.subject} - ${st.sourceDetails}</strong><br>ID: ${st.id} | Level: Sec ${st.secondary||'N/A'} | Source: ${st.sourceType}</div><div><h3 class="font-bold text-slate-800 mb-3 border-b pb-2">Grade History</h3>${gHtml}${chartHtml}</div>${errHtml}`;
+            document.getElementById('es-records-list-view').classList.add('hidden'); document.getElementById('es-record-detail-view').classList.remove('hidden');
             if(gs.length > 0) {
                 if(AppState.eduscan.performanceChart) AppState.eduscan.performanceChart.destroy();
-                AppState.eduscan.performanceChart = new Chart(document.getElementById('es-perf-chart').getContext('2d'), {
-                    type: 'line', data: { labels: gs.map(g=>`Att ${g.attemptNumber}`), datasets: [{ label: 'Score %', data: gs.map(g=>g.score/g.maxScore*100), borderColor: '#4f46e5', backgroundColor: 'rgba(79,70,229,0.1)', fill: true, tension: 0.1 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { min:0, max:100 } } }
-                });
+                AppState.eduscan.performanceChart = new Chart(document.getElementById('es-perf-chart').getContext('2d'), { type:'line', data:{labels:gs.map(g=>`Att ${g.attemptNumber}`),datasets:[{label:'Score %',data:gs.map(g=>g.score/g.maxScore*100),borderColor:'#4f46e5',backgroundColor:'rgba(79,70,229,0.1)',fill:true}]}, options:{responsive:true,maintainAspectRatio:false,scales:{y:{min:0,max:100}}} });
             }
         };
-        document.getElementById('btn-es-back-records').addEventListener('click', () => {
-            document.getElementById('es-record-detail-view').classList.add('hidden');
-            document.getElementById('es-records-list-view').classList.remove('hidden');
-        });
+        document.getElementById('btn-es-back-records').addEventListener('click', () => { document.getElementById('es-record-detail-view').classList.add('hidden'); document.getElementById('es-records-list-view').classList.remove('hidden'); });
 
-        // EduScan Scan to Find
-        document.getElementById('btn-es-scan-find').addEventListener('click', () => {
-            document.getElementById('es-record-scan-container').classList.remove('hidden');
-            AppState.eduscan.html5QrCodeRecord = startScanner('es-record-reader', (code) => {
-                document.getElementById('es-search-record').value = code; AppState.eduscan.filters.search = code; renderEsRecords();
-                document.getElementById('es-record-scan-container').classList.add('hidden');
-            });
+        document.getElementById('btn-es-scan-find').addEventListener('click', () => { 
+            document.getElementById('es-record-scan-container').classList.remove('hidden'); 
+            AppState.eduscan.html5QrCodeRecord = startScanner('es-record-reader', c => { 
+                document.getElementById('es-record-scan-container').classList.add('hidden'); // Close immediately
+                document.getElementById('es-search-record').value = c; AppState.eduscan.filters.search = c; renderEsRecords(); 
+            }); 
         });
-        document.getElementById('btn-es-scan-find-stop').addEventListener('click', () => {
-            if(AppState.eduscan.html5QrCodeRecord) AppState.eduscan.html5QrCodeRecord.stop();
-            document.getElementById('es-record-scan-container').classList.add('hidden');
-        });
+        document.getElementById('btn-es-scan-find-stop').addEventListener('click', () => { if(AppState.eduscan.html5QrCodeRecord) AppState.eduscan.html5QrCodeRecord.stop(); document.getElementById('es-record-scan-container').classList.add('hidden'); });
 
-        // EduScan Stats
         function updateEsStats() {
-            document.getElementById('es-stat-papers').textContent = AppState.eduscan.students.length;
-            document.getElementById('es-stat-grades').textContent = AppState.eduscan.grades.length;
+            document.getElementById('es-stat-papers').textContent = AppState.eduscan.students.length; document.getElementById('es-stat-grades').textContent = AppState.eduscan.grades.length;
             const avg = AppState.eduscan.grades.length > 0 ? (AppState.eduscan.grades.reduce((s,g)=>s+(g.score/g.maxScore*100),0)/AppState.eduscan.grades.length).toFixed(1) : 0;
-            document.getElementById('es-stat-avg').textContent = avg + '%';
-            document.getElementById('es-stat-subj').textContent = [...new Set(AppState.eduscan.students.map(s=>s.subject))].length;
-
-            // Render Wrong Questions
-            const wqCont = document.getElementById('es-wq-analysis-result'); wqCont.innerHTML = '';
-            let html = '';
-            AppState.eduscan.grades.forEach(g => {
-                let wqs = []; try { wqs = (typeof g.wrongQuestions === 'string') ? JSON.parse(g.wrongQuestions) : g.wrongQuestions; } catch(e){}
-                if(wqs && wqs.length > 0) {
-                    wqs.forEach(wq => {
-                        html += `<div class="bg-red-50 border border-red-100 p-4 rounded-lg text-sm">
-                            <div class="font-bold text-red-800 border-b border-red-200 pb-2 mb-2">Q${wq.number} - ${g.subject} (${g.assessmentName}) <span class="text-xs font-normal ml-2 bg-red-100 px-2 py-1 rounded">${wq.remark||'No remark'}</span></div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
-                                ${wq.questionText ? `<div class="bg-white p-2 border rounded"><strong class="text-slate-600 block text-xs">Question</strong>${wq.questionText}</div>` : ''}
-                                ${wq.userAnswer ? `<div class="bg-white p-2 border border-red-200 rounded"><strong class="text-red-600 block text-xs">Student Ans</strong>${wq.userAnswer}</div>` : ''}
-                                ${wq.correctAnswer ? `<div class="bg-white p-2 border border-green-200 rounded"><strong class="text-green-600 block text-xs">Correct Ans</strong>${wq.correctAnswer}</div>` : ''}
-                            </div>
-                        </div>`;
-                    });
-                }
-            });
-            wqCont.innerHTML = html || '<div class="text-slate-500">No wrong questions logged.</div>';
+            document.getElementById('es-stat-avg').textContent = avg + '%'; document.getElementById('es-stat-subj').textContent = [...new Set(AppState.eduscan.students.map(s=>s.subject))].length;
         }
 
-        // Initialize Everything
-        window.addEventListener('DOMContentLoaded', () => {
-            initLogbookFilters();
-            initNav();
-        });
-
+        window.addEventListener('DOMContentLoaded', () => { initLogbookFilters(); initNav(); });
     </script>
 </body>
 </html>
-
